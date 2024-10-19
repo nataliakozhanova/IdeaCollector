@@ -1,9 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
-    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".notes.ui.NotesFragment">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputTextLayout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp64"
+        android:background="?attr/colorSecondaryVariant"
+        app:boxBackgroundMode="none"
+        app:boxStrokeColor="@color/blue"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
+        app:endIconDrawable="@drawable/baseline_check_24"
+        app:endIconMode="custom"
+        app:endIconTint="?attr/colorOnPrimary"
+        app:hintEnabled="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/delimiterImageView"
+        app:startIconDrawable="@drawable/priority_red"
+        app:startIconTint="@null">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/inputText"
+            style="@style/noteText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="text"
+            android:maxLength="50"
+            tools:text="@string/note_mock" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/delimiterImageView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/note_icon_size"
+        app:layout_constraintTop_toBottomOf="@+id/inputTextLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/delimiter"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/notesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/delimiterImageView"
+        tools:itemCount="6"
+        tools:listitem="@layout/note_item_view"
+        tools:visibility="visible" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

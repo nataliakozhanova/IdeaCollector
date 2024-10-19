@@ -8,6 +8,7 @@
         <item name="colorSecondaryVariant">@color/gray_light</item>
         <item name="colorOnSecondary">@color/gray_light</item>
         <item name="colorControlHighlight">@color/blue</item>
+        <item name="color">@color/gray_border_light</item>
     </style>
 
     <style name="Theme.IdeaCollector" parent="Base.Theme.IdeaCollector" />
