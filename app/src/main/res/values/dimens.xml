@@ -6,4 +6,11 @@
     <dimen name="settings_menu_text_size">16sp</dimen>
     <dimen name="settings_hint_text_size">12sp</dimen>
     <dimen name="dialog_header_text_size">20sp</dimen>
+
+    <dimen name="note_icon_size">28dp</dimen>
+    <dimen name="dp12">12dp</dimen>
+    <dimen name="dp8">8dp</dimen>
+    <dimen name="dp4">4dp</dimen>
+    <dimen name="dp6">6dp</dimen>
+    <dimen name="dp2">2dp</dimen>
 </resources>
