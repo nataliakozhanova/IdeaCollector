@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Idea Collector</string>
-    <string name="note_mock">Очень важная заметка</string>
+    <string name="note_mock">Very important note</string>
     <string name="data_mock">2024-10-15 12:46:04</string>
 </resources>
