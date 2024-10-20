@@ -13,9 +13,6 @@
         android:layout_height="@dimen/dp64"
         android:background="?attr/colorSecondaryVariant"
         app:boxBackgroundMode="none"
-        app:boxStrokeColor="@color/blue"
-        app:boxStrokeWidth="1dp"
-        app:boxStrokeWidthFocused="2dp"
         app:endIconDrawable="@drawable/baseline_check_24"
         app:endIconMode="custom"
         app:endIconTint="?attr/colorOnPrimary"
@@ -29,11 +26,13 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputText"
-            style="@style/noteText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:cursorVisible="true"
+            android:textCursorDrawable="@drawable/custom_cursor_color"
             android:inputType="text"
             android:maxLength="50"
+            android:textAppearance="@style/noteText"
             tools:text="@string/note_mock" />
     </com.google.android.material.textfield.TextInputLayout>
 

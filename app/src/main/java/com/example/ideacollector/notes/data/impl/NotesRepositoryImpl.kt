@@ -13,8 +13,8 @@ class NotesRepositoryImpl(
     private val noteDbConverter: NoteDbConverter
 ) : NotesRepository {
     override fun getAllNotes(): Flow<List<Note>> = flow {
-        val allNotes = notesDatabase.notesDao().getAllNotes()
-        emit(convertToNote(allNotes))
+            val allNotes = notesDatabase.notesDao().getAllNotes()
+            emit(convertToNote(allNotes))
     }
 
     override suspend fun addNewNote(note: Note) {
