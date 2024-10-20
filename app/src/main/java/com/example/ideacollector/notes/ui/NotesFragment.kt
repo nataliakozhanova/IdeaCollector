@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
@@ -17,10 +16,18 @@ import com.example.ideacollector.notes.presentation.viewmodel.NotesViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NotesFragment : Fragment() {
+
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
     private val notesViewModel: NotesViewModel by viewModel()
     private val notesAdapter = NotesAdapter()
+    private val iconDrawables = listOf(
+        R.drawable.priority_red,
+        R.drawable.priority_yellow,
+        R.drawable.priority_green
+    )
+
+    private var currentIconIndex = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,8 +62,11 @@ class NotesFragment : Fragment() {
             onSaveNoteClick()
         }
 
-        binding.inputTextLayout.setStartIconOnClickListener {
+        binding.inputTextLayout.setStartIconDrawable(iconDrawables[currentIconIndex])
 
+        binding.inputTextLayout.setStartIconOnClickListener {
+            currentIconIndex = (currentIconIndex + 1) % iconDrawables.size
+            binding.inputTextLayout.setStartIconDrawable(iconDrawables[currentIconIndex])
         }
 
         binding.inputText.doOnTextChanged { text, _, _, _ ->
@@ -88,8 +98,7 @@ class NotesFragment : Fragment() {
     private fun onSaveNoteClick() {
         val noteText = binding.inputText.text.toString()
         val noteData = requireContext().getString(R.string.data_mock)
-        val priority = 1
-        notesViewModel.saveNote(priority, noteText, noteData)
+        notesViewModel.saveNote(currentIconIndex, noteText, noteData)
     }
 
     override fun onDestroyView() {
