@@ -13,6 +13,7 @@ import com.example.ideacollector.databinding.FragmentNotesBinding
 import com.example.ideacollector.notes.domain.models.Note
 import com.example.ideacollector.notes.presentation.models.NotesState
 import com.example.ideacollector.notes.presentation.viewmodel.NotesViewModel
+import com.example.ideacollector.util.getCurrentDateTime
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class NotesFragment : Fragment() {
@@ -52,11 +53,7 @@ class NotesFragment : Fragment() {
 
         binding.notesRecyclerView.adapter = notesAdapter
 
-        notesViewModel.getNotes()
-
-        notesViewModel.observeState().observe(viewLifecycleOwner) {
-            renderState(it)
-        }
+        updateNotes()
 
         binding.inputTextLayout.setEndIconOnClickListener {
             onSaveNoteClick()
@@ -83,6 +80,13 @@ class NotesFragment : Fragment() {
         }
     }
 
+    private fun updateNotes() {
+        notesViewModel.getNotes()
+        notesViewModel.observeState().observe(viewLifecycleOwner) {
+            renderState(it)
+        }
+    }
+
     private fun showEmpty(): Unit = with(binding) {
         notesRecyclerView.isVisible = false
     }
@@ -90,15 +94,18 @@ class NotesFragment : Fragment() {
     private fun showContent(notes: List<Note>) {
         binding.notesRecyclerView.isVisible = true
 
-        notesAdapter.notes.clear()
         notesAdapter.notes.addAll(notes)
         notesAdapter.notifyDataSetChanged()
     }
 
     private fun onSaveNoteClick() {
         val noteText = binding.inputText.text.toString()
-        val noteData = requireContext().getString(R.string.data_mock)
+        val noteData = getCurrentDateTime()
         notesViewModel.saveNote(currentIconIndex, noteText, noteData)
+        binding.inputText.setText("")
+        currentIconIndex = 0
+        binding.inputTextLayout.setStartIconDrawable(iconDrawables[currentIconIndex])
+        updateNotes()
     }
 
     override fun onDestroyView() {

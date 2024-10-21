@@ -29,7 +29,6 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
     }
 
     fun saveNote(priority: Int, noteText: String, noteData: String) {
-
         val note = Note(priority, noteText, noteData)
         viewModelScope.launch(Dispatchers.IO) {
             notesInteractor.addNewNote(note)
