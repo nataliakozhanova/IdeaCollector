@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="noteText">
+        <item name="android:textSize">@dimen/note_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="dataText">
+        <item name="android:textSize">@dimen/data_text_size</item>
+        <item name="android:textFontWeight">300</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="headerText">
+        <item name="android:textSize">@dimen/header_text_size</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="settingsMenuText">
+        <item name="android:textSize">@dimen/settings_menu_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="settingsHintText">
+        <item name="android:textSize">@dimen/settings_hint_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+    </style>
+    <style name="dialogHeaderPasswordText">
+        <item name="android:textSize">@dimen/dialog_header_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+    <style name="dialogHeaderSettingsText">
+        <item name="android:textSize">@dimen/settings_menu_text_size</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:fontFamily">@font/roboto_regular</item>
+        <item name="android:textColor">@color/blue</item>
+    </style>
+
+</resources>

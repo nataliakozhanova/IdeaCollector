@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="note_text_size">15sp</dimen>
+    <dimen name="data_text_size">11sp</dimen>
+    <dimen name="header_text_size">13sp</dimen>
+    <dimen name="settings_menu_text_size">16sp</dimen>
+    <dimen name="settings_hint_text_size">12sp</dimen>
+    <dimen name="dialog_header_text_size">20sp</dimen>
+
+    <dimen name="note_icon_size">28dp</dimen>
+    <dimen name="dp12">12dp</dimen>
+    <dimen name="dp8">8dp</dimen>
+    <dimen name="dp4">4dp</dimen>
+    <dimen name="dp6">6dp</dimen>
+    <dimen name="dp2">2dp</dimen>
+    <dimen name="dp64">64dp</dimen>
+</resources>
