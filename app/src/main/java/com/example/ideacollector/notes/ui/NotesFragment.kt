@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ideacollector.R
 import com.example.ideacollector.databinding.FragmentNotesBinding
@@ -57,6 +58,13 @@ class NotesFragment : Fragment() {
 
         binding.inputTextLayout.setEndIconOnClickListener {
             onSaveNoteClick()
+        }
+
+        binding.inputTextLayout.setEndIconOnLongClickListener {
+            findNavController().navigate(
+                R.id.action_notesFragment_to_settingsFragment
+            )
+            true
         }
 
         binding.inputTextLayout.setStartIconDrawable(iconDrawables[currentIconIndex])
