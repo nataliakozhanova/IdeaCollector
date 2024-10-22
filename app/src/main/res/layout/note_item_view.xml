@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_background"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/priorityImageView"
+        android:layout_width="@dimen/note_icon_size"
+        android:layout_height="@dimen/note_icon_size"
+        android:layout_marginHorizontal="@dimen/dp12"
+        android:layout_marginVertical="@dimen/dp8"
+        android:paddingHorizontal="@dimen/dp6"
+        android:paddingVertical="@dimen/dp4"
+        android:src="@drawable/lamp"
+        tools:background="@drawable/rectangle_red"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="@dimen/dp4"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/noteTextView"
+            style="@style/noteText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="@string/note_mock" />
+
+        <TextView
+            android:id="@+id/dataTextView"
+            style="@style/dataText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            tools:text="@string/data_mock" />
+
+    </LinearLayout>
+
+</LinearLayout>

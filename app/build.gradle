@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -23,16 +25,47 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 }
 
 dependencies {
+    // база данных
+    implementation libs.androidx.room.runtime
+    kapt libs.androidx.room.compiler
+    implementation libs.androidx.room.ktx
+
+    // JSON
+    implementation(libs.gson)
+
+    // навигация
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
+    // Jetpack Compose Integration
+    implementation(libs.androidx.navigation.compose)
+
+    // фрагменты
+    implementation libs.androidx.fragment.ktx
+    // viewpager
+    implementation(libs.androidx.viewpager2)
+    // Materials
+    implementation(libs.material)
+    // корутины
+    implementation(libs.kotlinx.coroutines.android)
+
+    // DI зависимости
+    implementation(libs.koin.android)
+
+    // RecyclerView
+    implementation(libs.androidx.recyclerview)
 
     implementation libs.androidx.core.ktx
     implementation libs.androidx.appcompat
