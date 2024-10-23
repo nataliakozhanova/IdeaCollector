@@ -2,7 +2,6 @@ package com.example.ideacollector.notes.data.converters
 
 import com.example.ideacollector.notes.data.db.NoteEntity
 import com.example.ideacollector.notes.domain.models.Note
-import com.google.gson.Gson
 
 class NoteDbConverter()  {
     fun map(note: Note) : NoteEntity {

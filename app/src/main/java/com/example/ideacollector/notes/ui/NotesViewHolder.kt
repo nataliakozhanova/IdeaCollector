@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ideacollector.R
 import com.example.ideacollector.databinding.NoteItemViewBinding
 import com.example.ideacollector.notes.domain.models.Note
+import com.example.ideacollector.notes.domain.models.Priority
 
 class NotesViewHolder(private val binding: NoteItemViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -13,7 +14,12 @@ class NotesViewHolder(private val binding: NoteItemViewBinding) : RecyclerView.V
         R.drawable.rectangle_green
     )
     fun bind(item: Note) {
-        binding.priorityImageView.setBackgroundResource(iconBackgroundDrawables[item.priority])
+        when(item.priority) {
+            Priority.LOW.toString() -> binding.priorityImageView.setBackgroundResource(iconBackgroundDrawables[2])
+            Priority.MEDIUM.toString() -> binding.priorityImageView.setBackgroundResource(iconBackgroundDrawables[1])
+            Priority.HIGH.toString() -> binding.priorityImageView.setBackgroundResource(iconBackgroundDrawables[0])
+        }
+
         binding.noteTextView.text = item.noteText
         binding.dataTextView.text = item.noteData
     }
