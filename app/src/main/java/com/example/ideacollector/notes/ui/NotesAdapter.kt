@@ -2,12 +2,12 @@ package com.example.ideacollector.notes.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import com.example.ideacollector.databinding.NoteItemViewBinding
 import com.example.ideacollector.notes.domain.models.Note
 
-class NotesAdapter() : RecyclerView.Adapter<NotesViewHolder>(){
-    var notes: ArrayList<Note> = ArrayList()
+class NotesAdapter() : ListAdapter<Note, NotesViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
 
@@ -17,11 +17,18 @@ class NotesAdapter() : RecyclerView.Adapter<NotesViewHolder>(){
         )
     }
 
-    override fun getItemCount(): Int {
-        return notes.size
+    override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: NotesViewHolder, position: Int) {
-        holder.bind(notes[position])
+
+    class DiffCallback : DiffUtil.ItemCallback<Note>() {
+        override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+            return oldItem.id == newItem.id
+        }
     }
 }

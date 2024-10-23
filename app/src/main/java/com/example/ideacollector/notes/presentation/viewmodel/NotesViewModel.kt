@@ -18,24 +18,30 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
     private val _priority = MutableLiveData(Priority.LOW)
     val priority: LiveData<Priority> get() = _priority
 
+    private var currentNotes: ArrayList<Note> = ArrayList()
+
     fun getNotes() {
         viewModelScope.launch(Dispatchers.IO) {
             notesInteractor
                 .getAllNotes()
                 .collect { notes ->
+                    currentNotes.clear()
                     if (notes.isEmpty()) {
                         renderNotesState(NotesState.Empty)
                     } else {
-                        renderNotesState(NotesState.Content(notes))
+                        currentNotes.addAll(notes)
+                        renderNotesState(NotesState.Content(currentNotes))
                     }
                 }
         }
     }
 
     fun saveNote(priority: String, noteText: String, noteData: String) {
-        val note = Note(0, priority, noteText, noteData)
         viewModelScope.launch(Dispatchers.IO) {
-            notesInteractor.addNewNote(note)
+            var noteToAdd = Note(0, priority, noteText, noteData)
+            noteToAdd.id = notesInteractor.addNewNote(noteToAdd)
+            currentNotes.add(noteToAdd)
+            renderNotesState(NotesState.Content(currentNotes))
         }
     }
 

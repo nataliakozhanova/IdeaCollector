@@ -84,7 +84,6 @@ class NotesFragment : Fragment() {
     }
 
     private fun renderState(state: NotesState) {
-        notesAdapter.notes.clear()
         when (state) {
             is NotesState.Empty -> showEmpty()
             is NotesState.Content -> showContent(state.notes)
@@ -104,8 +103,7 @@ class NotesFragment : Fragment() {
 
     private fun showContent(notes: List<Note>) {
         binding.notesRecyclerView.isVisible = true
-
-        notesAdapter.notes.addAll(notes)
+        notesAdapter.submitList(notes)
         notesAdapter.notifyDataSetChanged()
     }
 
