@@ -103,8 +103,7 @@ class NotesFragment : Fragment() {
 
     private fun showContent(notes: List<Note>) {
         binding.notesRecyclerView.isVisible = true
-        notesAdapter.submitList(notes)
-        notesAdapter.notifyDataSetChanged()
+        notesAdapter.submitList(notes.toList())
     }
 
     private fun onSaveNoteClick() {
