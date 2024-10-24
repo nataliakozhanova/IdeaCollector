@@ -10,8 +10,8 @@ class NotesInteractorImpl(private val notesRepository: NotesRepository) : NotesI
         return notesRepository.getAllNotes()
     }
 
-    override suspend fun addNewNote(note: Note) {
-        notesRepository.addNewNote(note)
+    override suspend fun addNewNote(note: Note) : Int {
+        return notesRepository.addNewNote(note)
     }
 
     override suspend fun deleteNote(id: Int) {

@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
     fun getAllNotes(): Flow<List<Note>>
-    suspend fun addNewNote(note: Note)
+    suspend fun addNewNote(note: Note) : Int
     suspend fun deleteNote(id: Int)
 }
