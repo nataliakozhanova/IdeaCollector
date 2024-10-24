@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.ideacollector.databinding.NoteItemViewBinding
 import com.example.ideacollector.notes.domain.models.Note
 
-class NotesAdapter() : ListAdapter<Note, NotesViewHolder>(DiffCallback()) {
+class NotesAdapter(private val noteLongClickListener: NoteLongClickListener) : ListAdapter<Note, NotesViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
 
         val layoutInspector = LayoutInflater.from(parent.context)
         return NotesViewHolder(
+            noteLongClickListener,
             NoteItemViewBinding.inflate(layoutInspector, parent, false)
         )
     }
@@ -30,5 +31,9 @@ class NotesAdapter() : ListAdapter<Note, NotesViewHolder>(DiffCallback()) {
         override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
             return oldItem == newItem
         }
+    }
+
+    fun interface NoteLongClickListener {
+        fun onNoteLongClick(note: Note)
     }
 }

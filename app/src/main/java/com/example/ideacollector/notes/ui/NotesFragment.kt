@@ -1,5 +1,6 @@
 package com.example.ideacollector.notes.ui
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ import com.example.ideacollector.notes.domain.models.Priority
 import com.example.ideacollector.notes.presentation.models.NotesState
 import com.example.ideacollector.notes.presentation.viewmodel.NotesViewModel
 import com.example.ideacollector.util.getCurrentDateTime
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
@@ -23,7 +25,7 @@ class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
     private val notesViewModel: NotesViewModel by viewModel()
-    private val notesAdapter = NotesAdapter()
+    private val notesAdapter = NotesAdapter { note -> showNoteDialog(note) }
     private val iconDrawables = listOf(
         R.drawable.priority_red,
         R.drawable.priority_yellow,
@@ -64,11 +66,11 @@ class NotesFragment : Fragment() {
         }
 
         binding.inputTextLayout.setEndIconOnClickListener {
-            if(binding.inputText.text.toString().isNullOrEmpty()) {
+            if (binding.inputText.text.toString().isNullOrEmpty()) {
             } else {
-                    onSaveNoteClick()
-                }
+                onSaveNoteClick()
             }
+        }
 
         binding.inputTextLayout.setEndIconOnLongClickListener {
             findNavController().navigate(
@@ -112,6 +114,28 @@ class NotesFragment : Fragment() {
         notesViewModel.saveNote(notesViewModel.priority.value.toString(), noteText, noteData)
         binding.inputText.setText("")
         updateNotes()
+    }
+
+    private fun onDeleteNoteClick(note: Note) {
+        notesViewModel.deleteNote(note)
+        updateNotes()
+    }
+
+    private fun onEditNoteClick() {
+
+    }
+
+    private fun showNoteDialog(note: Note) {
+        val items = arrayOf("Edit", "Delete")
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.dialog_note_header)
+            .setItems(items) { _, which ->
+                when (which) {
+                    0 -> onEditNoteClick()
+                    1 -> onDeleteNoteClick(note)
+                }
+            }
+            .show()
     }
 
     override fun onDestroyView() {

@@ -37,12 +37,20 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
     }
 
     fun saveNote(priority: String, noteText: String, noteData: String) {
+        var noteToAdd = Note(0, priority, noteText, noteData)
         viewModelScope.launch(Dispatchers.IO) {
-            var noteToAdd = Note(0, priority, noteText, noteData)
             noteToAdd.id = notesInteractor.addNewNote(noteToAdd)
-            currentNotes.add(noteToAdd)
-            renderNotesState(NotesState.Content(currentNotes))
         }
+        currentNotes.add(noteToAdd)
+        renderNotesState(NotesState.Content(currentNotes))
+    }
+
+    fun deleteNote(noteToDelete: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            notesInteractor.deleteNote(noteToDelete.id)
+        }
+        currentNotes.remove(noteToDelete)
+        renderNotesState(NotesState.Content(currentNotes))
     }
 
     fun updatePriority() {
