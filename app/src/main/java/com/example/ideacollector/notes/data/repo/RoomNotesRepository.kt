@@ -1,4 +1,4 @@
-package com.example.ideacollector.notes.data.impl
+package com.example.ideacollector.notes.data.repo
 
 import com.example.ideacollector.notes.data.converters.NoteDbConverter
 import com.example.ideacollector.notes.data.db.NoteEntity
@@ -8,7 +8,7 @@ import com.example.ideacollector.notes.domain.models.Note
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class NotesRepositoryImpl(
+class RoomNotesRepository(
     private val notesDatabase: NotesDatabase,
     private val noteDbConverter: NoteDbConverter
 ) : NotesRepository {
