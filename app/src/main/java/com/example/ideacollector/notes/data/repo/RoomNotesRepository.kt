@@ -14,7 +14,9 @@ class RoomNotesRepository(
 ) : NotesRepository {
     override fun getAllNotes(): Flow<List<Note>> {
         return notesDatabase.notesDao().getAllNotes()
-            .map { note -> convertToNote(note) }
+            .map {
+                note -> convertToNote(note)
+            }
     }
 
     override suspend fun addNewNote(note: Note) : Int {
@@ -33,5 +35,4 @@ class RoomNotesRepository(
     private fun convertToNote(notes: List<NoteEntity>): List<Note> {
         return notes.map { note -> noteDbConverter.map(note) }
     }
-
 }
