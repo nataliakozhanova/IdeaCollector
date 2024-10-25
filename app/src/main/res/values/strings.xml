@@ -3,4 +3,7 @@
     <string name="note_mock">Very important note</string>
     <string name="data_mock">2024-10-15 12:46:04</string>
     <string name="settings_header">PASSWORD SETTINGS</string>
+    <string name="dialog_note_header">Select an action for the note</string>
+    <string name="dialog_note_edit_item">Edit</string>
+    <string name="dialog_note_delete_item">Delete</string>
 </resources>
