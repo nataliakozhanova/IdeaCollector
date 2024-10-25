@@ -1,12 +1,15 @@
 package com.example.ideacollector.notes.ui
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.ideacollector.R
@@ -17,6 +20,7 @@ import com.example.ideacollector.notes.presentation.models.NotesState
 import com.example.ideacollector.notes.presentation.viewmodel.NotesViewModel
 import com.example.ideacollector.util.getCurrentDateTime
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
@@ -55,21 +59,25 @@ class NotesFragment : Fragment() {
 
         binding.notesRecyclerView.adapter = notesAdapter
 
-        updateNotes()
+        observeNotes()
 
-        notesViewModel.priority.observe(viewLifecycleOwner) { priority ->
-            when (priority) {
-                Priority.LOW -> binding.inputTextLayout.setStartIconDrawable(iconDrawables[2])
-                Priority.MEDIUM -> binding.inputTextLayout.setStartIconDrawable(iconDrawables[1])
-                Priority.HIGH -> binding.inputTextLayout.setStartIconDrawable(iconDrawables[0])
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notesViewModel.priority.collect { priority ->
+                    when (priority) {
+                        Priority.LOW -> binding.inputTextLayout.setStartIconDrawable(iconDrawables[2])
+                        Priority.MEDIUM -> binding.inputTextLayout.setStartIconDrawable(
+                            iconDrawables[1]
+                        )
+
+                        Priority.HIGH -> binding.inputTextLayout.setStartIconDrawable(iconDrawables[0])
+                    }
+                }
             }
         }
 
         binding.inputTextLayout.setEndIconOnClickListener {
-            if (binding.inputText.text.toString().isNullOrEmpty()) {
-            } else {
-                onSaveNoteClick()
-            }
+            onSaveNoteClick()
         }
 
         binding.inputTextLayout.setEndIconOnLongClickListener {
@@ -92,10 +100,13 @@ class NotesFragment : Fragment() {
         }
     }
 
-    private fun updateNotes() {
-        notesViewModel.getNotes()
-        notesViewModel.observeNotesState().observe(viewLifecycleOwner) {
-            renderState(it)
+    private fun observeNotes() {
+        viewLifecycleOwner.lifecycleScope.launch  {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notesViewModel.allNotes.collect {
+                    renderState(it)
+                }
+            }
         }
     }
 
@@ -113,12 +124,10 @@ class NotesFragment : Fragment() {
         val noteData = getCurrentDateTime()
         notesViewModel.saveNote(notesViewModel.priority.value.toString(), noteText, noteData)
         binding.inputText.setText("")
-        updateNotes()
     }
 
     private fun onDeleteNoteClick(note: Note) {
         notesViewModel.deleteNote(note)
-        updateNotes()
     }
 
     private fun onEditNoteClick() {

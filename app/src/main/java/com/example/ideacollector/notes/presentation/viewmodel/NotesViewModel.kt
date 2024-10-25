@@ -9,48 +9,43 @@ import com.example.ideacollector.notes.domain.models.Note
 import com.example.ideacollector.notes.domain.models.Priority
 import com.example.ideacollector.notes.presentation.models.NotesState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
-    private val stateNotesLiveData = MutableLiveData<NotesState>()
-    fun observeNotesState(): LiveData<NotesState> = stateNotesLiveData
+    private val _priority = MutableStateFlow(Priority.LOW)
+    val priority: StateFlow<Priority> get() = _priority
 
-    private val _priority = MutableLiveData(Priority.LOW)
-    val priority: LiveData<Priority> get() = _priority
-
-    private var currentNotes: ArrayList<Note> = ArrayList()
-
-    fun getNotes() {
-        viewModelScope.launch(Dispatchers.IO) {
-            notesInteractor
-                .getAllNotes()
-                .collect { notes ->
-                    currentNotes.clear()
-                    if (notes.isEmpty()) {
-                        renderNotesState(NotesState.Empty)
-                    } else {
-                        currentNotes.addAll(notes)
-                        renderNotesState(NotesState.Content(currentNotes))
-                    }
-                }
-        }
-    }
+    val allNotes: StateFlow<NotesState> = notesInteractor
+        .getAllNotes()
+        .map { notes ->
+            if (notes.isEmpty()) {
+                NotesState.Empty
+            } else {
+                NotesState.Content(notes)
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            NotesState.Empty
+        )
 
     fun saveNote(priority: String, noteText: String, noteData: String) {
         var noteToAdd = Note(0, priority, noteText, noteData)
         viewModelScope.launch(Dispatchers.IO) {
             noteToAdd.id = notesInteractor.addNewNote(noteToAdd)
         }
-        currentNotes.add(noteToAdd)
-        renderNotesState(NotesState.Content(currentNotes))
     }
 
     fun deleteNote(noteToDelete: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             notesInteractor.deleteNote(noteToDelete.id)
         }
-        currentNotes.remove(noteToDelete)
-        renderNotesState(NotesState.Content(currentNotes))
     }
 
     fun updatePriority() {
@@ -58,11 +53,6 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             Priority.LOW -> Priority.MEDIUM
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
-            else -> Priority.LOW
         }
-    }
-
-    private fun renderNotesState(notesState: NotesState) {
-        stateNotesLiveData.postValue(notesState)
     }
 }
