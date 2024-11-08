@@ -1,7 +1,5 @@
 package com.example.ideacollector.notes.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ideacollector.notes.domain.api.NotesInteractor
@@ -9,7 +7,6 @@ import com.example.ideacollector.notes.domain.models.Note
 import com.example.ideacollector.notes.domain.models.Priority
 import com.example.ideacollector.notes.presentation.models.NotesState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +17,9 @@ import kotlinx.coroutines.launch
 class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
+
+    private val _savedNote = MutableStateFlow(Note())
+    // val savedNote: StateFlow<Note> get() = _savedNote
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()
@@ -35,16 +35,26 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             NotesState.Empty
         )
 
-    fun saveNote(priority: String, noteText: String, noteData: String) {
-        var noteToAdd = Note(0, priority, noteText, noteData)
-        viewModelScope.launch(Dispatchers.IO) {
-            noteToAdd.id = notesInteractor.addNewNote(noteToAdd)
+    fun saveNoteIfValid(priority: String, noteText: String, noteDate: String) {
+        if(noteText.isNotEmpty()) {
+            _savedNote.value = Note(0, priority, noteText, noteDate)
+            val noteToAdd = _savedNote.value
+            viewModelScope.launch(Dispatchers.IO) {
+                notesInteractor.addNewNote(noteToAdd)
+            }
         }
     }
 
     fun deleteNote(noteToDelete: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             notesInteractor.deleteNote(noteToDelete.id)
+        }
+    }
+
+    fun editNote(id: Int, priority: String, noteText: String, noteDate: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val editedNote = Note(id, priority, noteText, noteDate)
+            notesInteractor.editNote(editedNote)
         }
     }
 

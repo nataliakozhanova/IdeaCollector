@@ -32,8 +32,8 @@ class NotesViewHolder(
             )
         }
 
-        binding.noteTextView.text = item.noteText
-        binding.dataTextView.text = item.noteData
+        binding.noteTextView.text = item.text
+        binding.dateTextView.text = item.date
 
         itemView.setOnLongClickListener {
             onLongClickListener.onNoteLongClick(item)
