@@ -52,12 +52,18 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
         }
     }
 
-    fun editNote(id: Int, priority: String, noteText: String, noteDate: String) {
+    fun editNote(oldNote: Note, newNote: Note) {
+        if (newNote.text.isNotEmpty() && (oldNote.text != newNote.text || oldNote.priority != newNote.priority)) {
+            saveEditedNote(newNote)
+        }
+    }
+
+    private fun saveEditedNote(editedNote: Note) {
         viewModelScope.launch(Dispatchers.IO) {
-            val editedNote = Note(id, priority, noteText, noteDate)
             notesInteractor.editNote(editedNote)
         }
     }
+
 
     fun updatePriority() {
         _priority.value = when (_priority.value) {
@@ -67,13 +73,16 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
         }
     }
 
-    fun editPriority(priority: Priority) {
+    fun setInitialPriority(priority: Priority) {
         _editedPriority.value = priority
-        when (_editedPriority.value) {
+    }
+
+    fun editPriority() {
+        _editedPriority.value = when (_editedPriority.value) {
             Priority.LOW -> Priority.MEDIUM
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
-            null -> TODO()
+            else -> Priority.LOW
         }
     }
 }

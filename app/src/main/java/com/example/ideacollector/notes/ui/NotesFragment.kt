@@ -104,14 +104,6 @@ class NotesFragment : Fragment() {
 
     }
 
-    private fun renderPriority(priority: Priority) : Int {
-        return when (priority) {
-            Priority.LOW -> iconDrawables[2]
-            Priority.MEDIUM -> iconDrawables[1]
-            Priority.HIGH -> iconDrawables[0]
-        }
-    }
-
     private fun renderState(state: NotesState) {
         when (state) {
             is NotesState.Empty -> showEmpty()
@@ -142,35 +134,37 @@ class NotesFragment : Fragment() {
         notesViewModel.deleteNote(note)
     }
 
-    private fun onEditNoteClick(note: Note) {
-        showEditNoteDialog(note.text, note.priority) { newText, newPriority ->
-            notesViewModel.editNote(note.id, newPriority, newText, getCurrentDateTime())
+    private fun onEditNoteClick(oldNote: Note) {
+        showEditNoteDialog(oldNote.text, oldNote.priority) { newText, newPriority ->
+            val newNote = Note(oldNote.id, newPriority, newText, getCurrentDateTime())
+            notesViewModel.editNote(oldNote, newNote)
         }
     }
 
-    private fun showEditNoteDialog(initialText: String, initialPriority: String, onNoteSaved: (String, String) -> Unit) {
+    private fun showEditNoteDialog(
+        initialText: String,
+        initialPriority: String,
+        onNoteSaved: (String, String) -> Unit,
+    ) {
+
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_note, null)
         val textInputLayout = dialogView.findViewById<TextInputLayout>(R.id.inputEditingTextLayout)
         val editText = dialogView.findViewById<TextInputEditText>(R.id.inputEditingText)
         editText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         editText.setText(initialText)
-        val priorityToEdit = enumValueOf<Priority>(initialPriority)
-        textInputLayout.setStartIconDrawable(renderPriority(priorityToEdit))
 
-                notesViewModel.editedPriority.observe(viewLifecycleOwner) { priority ->
-                    when (priority) {
-                        Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
-                        Priority.MEDIUM -> textInputLayout.setStartIconDrawable(
-                            iconDrawables[1]
-                        )
+        notesViewModel.editedPriority.observe(viewLifecycleOwner) { editedPriority ->
+            when (editedPriority) {
+                Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
+                Priority.MEDIUM -> textInputLayout.setStartIconDrawable(iconDrawables[1])
+                Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
+            }
+        }
 
-                        Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
-                    }
-                }
-
+        notesViewModel.setInitialPriority(enumValueOf<Priority>(initialPriority))
 
         textInputLayout.setStartIconOnClickListener {
-            notesViewModel.editPriority(priorityToEdit)
+            notesViewModel.editPriority()
         }
 
         // Отступ для текста ошибки
@@ -210,6 +204,7 @@ class NotesFragment : Fragment() {
         dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(colorOnPrimary.data)
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(colorOnPrimary.data)
     }
+
 
     private fun showNoteDialog(note: Note) {
         val items = arrayOf(
