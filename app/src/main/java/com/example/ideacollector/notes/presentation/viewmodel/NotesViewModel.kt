@@ -1,5 +1,7 @@
 package com.example.ideacollector.notes.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ideacollector.notes.domain.api.NotesInteractor
@@ -18,8 +20,8 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
 
-    private val _savedNote = MutableStateFlow(Note())
-    // val savedNote: StateFlow<Note> get() = _savedNote
+    private val _editedPriority = MutableLiveData<Priority>()
+    val editedPriority: LiveData<Priority> get() = _editedPriority
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()
@@ -36,9 +38,8 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
         )
 
     fun saveNoteIfValid(priority: String, noteText: String, noteDate: String) {
-        if(noteText.isNotEmpty()) {
-            _savedNote.value = Note(0, priority, noteText, noteDate)
-            val noteToAdd = _savedNote.value
+        if (noteText.isNotEmpty()) {
+            val noteToAdd = Note(0, priority, noteText, noteDate)
             viewModelScope.launch(Dispatchers.IO) {
                 notesInteractor.addNewNote(noteToAdd)
             }
@@ -63,6 +64,16 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             Priority.LOW -> Priority.MEDIUM
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
+        }
+    }
+
+    fun editPriority(priority: Priority) {
+        _editedPriority.value = priority
+        when (_editedPriority.value) {
+            Priority.LOW -> Priority.MEDIUM
+            Priority.MEDIUM -> Priority.HIGH
+            Priority.HIGH -> Priority.LOW
+            null -> TODO()
         }
     }
 }

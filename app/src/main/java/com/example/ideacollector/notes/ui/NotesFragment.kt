@@ -27,6 +27,7 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 class NotesFragment : Fragment() {
 
     private var _binding: FragmentNotesBinding? = null
@@ -80,10 +81,14 @@ class NotesFragment : Fragment() {
         }
 
         binding.inputTextLayout.setEndIconOnClickListener {
-                val noteText = binding.inputText.text.toString()
-                val noteDate = getCurrentDateTime()
-                notesViewModel.saveNoteIfValid(notesViewModel.priority.value.toString(), noteText, noteDate)
-                binding.inputText.setText("")
+            val noteText = binding.inputText.text.toString()
+            val noteDate = getCurrentDateTime()
+            notesViewModel.saveNoteIfValid(
+                notesViewModel.priority.value.toString(),
+                noteText,
+                noteDate
+            )
+            binding.inputText.setText("")
         }
 
         binding.inputTextLayout.setEndIconOnLongClickListener {
@@ -97,6 +102,14 @@ class NotesFragment : Fragment() {
             notesViewModel.updatePriority()
         }
 
+    }
+
+    private fun renderPriority(priority: Priority) : Int {
+        return when (priority) {
+            Priority.LOW -> iconDrawables[2]
+            Priority.MEDIUM -> iconDrawables[1]
+            Priority.HIGH -> iconDrawables[0]
+        }
     }
 
     private fun renderState(state: NotesState) {
@@ -130,21 +143,41 @@ class NotesFragment : Fragment() {
     }
 
     private fun onEditNoteClick(note: Note) {
-        showEditNoteDialog(note.text) { newText ->
-            notesViewModel.editNote(note.id, Priority.LOW.toString(), newText, getCurrentDateTime())
+        showEditNoteDialog(note.text, note.priority) { newText, newPriority ->
+            notesViewModel.editNote(note.id, newPriority, newText, getCurrentDateTime())
         }
     }
 
-    private fun showEditNoteDialog(initialText: String, onTextSaved: (String) -> Unit) {
+    private fun showEditNoteDialog(initialText: String, initialPriority: String, onNoteSaved: (String, String) -> Unit) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_note, null)
         val textInputLayout = dialogView.findViewById<TextInputLayout>(R.id.inputEditingTextLayout)
         val editText = dialogView.findViewById<TextInputEditText>(R.id.inputEditingText)
+        editText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         editText.setText(initialText)
+        val priorityToEdit = enumValueOf<Priority>(initialPriority)
+        textInputLayout.setStartIconDrawable(renderPriority(priorityToEdit))
 
-        // Настраиваем отступ для текста ошибки
+                notesViewModel.editedPriority.observe(viewLifecycleOwner) { priority ->
+                    when (priority) {
+                        Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
+                        Priority.MEDIUM -> textInputLayout.setStartIconDrawable(
+                            iconDrawables[1]
+                        )
+
+                        Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
+                    }
+                }
+
+
+        textInputLayout.setStartIconOnClickListener {
+            notesViewModel.editPriority(priorityToEdit)
+        }
+
+        // Отступ для текста ошибки
         textInputLayout.post {
-            val errorTextView = textInputLayout.findViewById<TextView>(com.google.android.material.R.id.textinput_error)
-            errorTextView?.setPadding(40, 0, 0, 0)  // Задаём отступ слева (40dp)
+            val errorTextView =
+                textInputLayout.findViewById<TextView>(com.google.android.material.R.id.textinput_error)
+            errorTextView?.setPadding(40, 0, 0, 0)
         }
 
         val dialog = MaterialAlertDialogBuilder(requireContext())
@@ -158,11 +191,13 @@ class NotesFragment : Fragment() {
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
             val newText = editText.text.toString()
+            val newPriority = notesViewModel.editedPriority.value.toString()
             if (newText.isNotBlank()) {
-                onTextSaved(newText)  // Сохраняем только если текст не пустой
+                onNoteSaved(newText, newPriority)  // Сохраняем только если текст не пустой
                 dialog.dismiss()
             } else {
-                textInputLayout.error = getString(R.string.dialog_error)  // Устанавливаем текст ошибки, если текст пустой
+                textInputLayout.error =
+                    getString(R.string.dialog_error)  // Устанавливаем текст ошибки, если текст пустой
             }
         }
 
@@ -177,7 +212,10 @@ class NotesFragment : Fragment() {
     }
 
     private fun showNoteDialog(note: Note) {
-        val items = arrayOf(getString(R.string.dialog_note_edit_item), getString(R.string.dialog_note_delete_item))
+        val items = arrayOf(
+            getString(R.string.dialog_note_edit_item),
+            getString(R.string.dialog_note_delete_item)
+        )
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.dialog_note_header)
             .setItems(items) { _, which ->
