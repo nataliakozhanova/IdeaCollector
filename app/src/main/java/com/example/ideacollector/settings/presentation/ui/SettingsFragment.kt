@@ -1,4 +1,4 @@
-package com.example.ideacollector.settings.ui
+package com.example.ideacollector.settings.presentation.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater

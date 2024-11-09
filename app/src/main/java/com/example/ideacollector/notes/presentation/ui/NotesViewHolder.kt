@@ -1,4 +1,4 @@
-package com.example.ideacollector.notes.ui
+package com.example.ideacollector.notes.presentation.ui
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ideacollector.R

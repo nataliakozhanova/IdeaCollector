@@ -8,6 +8,21 @@
     <string name="dialog_note_delete_item">Delete</string>
     <string name="dialog_edit_note_header">Edit note</string>
     <string name="dialog_save_button">Save</string>
+    <string name="dialog_ok_button">OK</string>
     <string name="dialog_cancel_button">Cancel</string>
     <string name="dialog_error">Field cannot be empty</string>
+    <string name="enable_password_header">Enable password</string>
+    <string name="enable_password_settings">Enable password access to the ideas</string>
+    <string name="password_header">New password and confirmation</string>
+    <string name="password_settings_on">Password is SET!</string>
+    <string name="password_settings_off">Password is NOT set</string>
+    <string name="sorting_header">Sort type</string>
+    <string name="sorting_settings_priority">Priority</string>
+    <string name="sorting_settings_date">Date</string>
+    <string name="theme_header">Theme</string>
+    <string name="theme_settings_light">Light</string>
+    <string name="theme_settings_dark">Dark</string>
+    <string name="dialog_password">Password</string>
+    <string name="dialog_confirm">Confirm</string>
+    <string name="dialog_password_header">Type password...</string>
 </resources>

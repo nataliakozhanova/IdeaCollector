@@ -1,4 +1,4 @@
-package com.example.ideacollector.notes.ui
+package com.example.ideacollector.notes.presentation.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import com.example.ideacollector.databinding.NoteItemViewBinding
 import com.example.ideacollector.notes.domain.models.Note
 
-class NotesAdapter(private val noteLongClickListener: NoteLongClickListener) : ListAdapter<Note, NotesViewHolder>(DiffCallback()) {
+class NotesAdapter(private val noteLongClickListener: NoteLongClickListener) : ListAdapter<Note, NotesViewHolder>(
+    DiffCallback()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
 

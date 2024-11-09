@@ -1,4 +1,4 @@
-package com.example.ideacollector.notes.ui
+package com.example.ideacollector.notes.presentation.ui
 
 import android.os.Bundle
 import android.util.TypedValue
