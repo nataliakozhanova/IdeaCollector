@@ -82,13 +82,7 @@ class NotesFragment : Fragment() {
 
         binding.inputTextLayout.setEndIconOnClickListener {
             val noteText = binding.inputText.text.toString()
-            val noteDate = getCurrentDateTime()
-            notesViewModel.saveNoteIfValid(
-                notesViewModel.priority.value.toString(),
-                noteText,
-                noteDate
-            )
-            binding.inputText.setText("")
+            binding.inputText.setText(notesViewModel.userClickedSaveButton(noteText))
         }
 
         binding.inputTextLayout.setEndIconOnLongClickListener {
@@ -101,7 +95,6 @@ class NotesFragment : Fragment() {
         binding.inputTextLayout.setStartIconOnClickListener {
             notesViewModel.updatePriority()
         }
-
     }
 
     private fun renderState(state: NotesState) {
@@ -131,13 +124,13 @@ class NotesFragment : Fragment() {
     }
 
     private fun onDeleteNoteClick(note: Note) {
-        notesViewModel.deleteNote(note)
+        notesViewModel.userClickedDeleteNote(note)
     }
 
     private fun onEditNoteClick(oldNote: Note) {
         showEditNoteDialog(oldNote.text, oldNote.priority) { newText, newPriority ->
             val newNote = Note(oldNote.id, newPriority, newText, getCurrentDateTime())
-            notesViewModel.editNote(oldNote, newNote)
+            notesViewModel.userClickedEditNote(oldNote, newNote)
         }
     }
 
