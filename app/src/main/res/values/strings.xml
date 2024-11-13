@@ -6,4 +6,8 @@
     <string name="dialog_note_header">Select an action for the note</string>
     <string name="dialog_note_edit_item">Edit</string>
     <string name="dialog_note_delete_item">Delete</string>
+    <string name="dialog_edit_note_header">Edit note</string>
+    <string name="dialog_save_button">Save</string>
+    <string name="dialog_cancel_button">Cancel</string>
+    <string name="dialog_error">Field cannot be empty</string>
 </resources>

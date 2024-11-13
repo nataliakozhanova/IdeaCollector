@@ -19,13 +19,18 @@ class RoomNotesRepository(
             }
     }
 
-    override suspend fun addNewNote(note: Note) : Int {
+    override suspend fun addNewNote(note: Note){
         val noteEntity = convertToNoteEntity(note)
-        return notesDatabase.notesDao().addNewNote(noteEntity).toInt()
+        notesDatabase.notesDao().addNewNote(noteEntity)
     }
 
     override suspend fun deleteNote(id: Int) {
         notesDatabase.notesDao().deleteNote(id)
+    }
+
+    override suspend fun updateNote(note: Note) {
+        val noteEntity = convertToNoteEntity(note)
+        notesDatabase.notesDao().updateNote(noteEntity.priority, noteEntity.text, noteEntity.date, noteEntity.id)
     }
 
     private fun convertToNoteEntity(note: Note): NoteEntity {

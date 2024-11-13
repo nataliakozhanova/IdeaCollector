@@ -9,7 +9,6 @@ import com.example.ideacollector.notes.domain.models.Note
 import com.example.ideacollector.notes.domain.models.Priority
 import com.example.ideacollector.notes.presentation.models.NotesState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +19,9 @@ import kotlinx.coroutines.launch
 class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
+
+    private val _editedPriority = MutableLiveData<Priority>()
+    val editedPriority: LiveData<Priority> get() = _editedPriority
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()
@@ -35,10 +37,12 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             NotesState.Empty
         )
 
-    fun saveNote(priority: String, noteText: String, noteData: String) {
-        var noteToAdd = Note(0, priority, noteText, noteData)
-        viewModelScope.launch(Dispatchers.IO) {
-            noteToAdd.id = notesInteractor.addNewNote(noteToAdd)
+    fun saveNoteIfValid(priority: String, noteText: String, noteDate: String) {
+        if (noteText.isNotEmpty()) {
+            val noteToAdd = Note(0, priority, noteText, noteDate)
+            viewModelScope.launch(Dispatchers.IO) {
+                notesInteractor.addNewNote(noteToAdd)
+            }
         }
     }
 
@@ -48,11 +52,37 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
         }
     }
 
+    fun editNote(oldNote: Note, newNote: Note) {
+        if (newNote.text.isNotEmpty() && (oldNote.text != newNote.text || oldNote.priority != newNote.priority)) {
+            saveEditedNote(newNote)
+        }
+    }
+
+    private fun saveEditedNote(editedNote: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            notesInteractor.editNote(editedNote)
+        }
+    }
+
+
     fun updatePriority() {
         _priority.value = when (_priority.value) {
             Priority.LOW -> Priority.MEDIUM
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
+        }
+    }
+
+    fun setInitialPriority(priority: Priority) {
+        _editedPriority.value = priority
+    }
+
+    fun editPriority() {
+        _editedPriority.value = when (_editedPriority.value) {
+            Priority.LOW -> Priority.MEDIUM
+            Priority.MEDIUM -> Priority.HIGH
+            Priority.HIGH -> Priority.LOW
+            else -> Priority.LOW
         }
     }
 }

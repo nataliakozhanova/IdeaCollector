@@ -8,8 +8,8 @@ class NoteDbConverter()  {
         return NoteEntity(
             note.id,
             note.priority,
-            note.noteText,
-            note.noteData
+            note.text,
+            note.date
         )
     }
 
@@ -17,8 +17,8 @@ class NoteDbConverter()  {
         return Note(
             noteEntity.id,
             noteEntity.priority,
-            noteEntity.noteText,
-            noteEntity.noteData
+            noteEntity.text,
+            noteEntity.date
         )
     }
 }
