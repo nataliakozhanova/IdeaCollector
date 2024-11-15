@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -140,17 +141,23 @@ class NotesFragment : Fragment() {
         onNoteSaved: (String, String) -> Unit,
     ) {
 
+        notesViewModel.updatedEditPriority(Priority.valueOf(initialPriority))
+
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_note, null)
         val textInputLayout = dialogView.findViewById<TextInputLayout>(R.id.inputEditingTextLayout)
         val editText = dialogView.findViewById<TextInputEditText>(R.id.inputEditingText)
         editText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         editText.setText(initialText)
 
-        notesViewModel.editedPriority.observe(viewLifecycleOwner) { editedPriority ->
-            when (editedPriority) {
-                Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
-                Priority.MEDIUM -> textInputLayout.setStartIconDrawable(iconDrawables[1])
-                Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notesViewModel.editedPriority.collect { editedPriority ->
+                    when (editedPriority) {
+                        Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
+                        Priority.MEDIUM -> textInputLayout.setStartIconDrawable(iconDrawables[1])
+                        Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
+                    }
+                }
             }
         }
 

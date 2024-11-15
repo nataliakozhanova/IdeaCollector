@@ -2,7 +2,7 @@ package com.example.ideacollector.settings.presentation.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.example.ideacollector.di.App
+import com.example.ideacollector.App
 import com.example.ideacollector.settings.domain.api.SettingsInteractor
 import com.example.ideacollector.settings.domain.models.Theme
 import kotlinx.coroutines.flow.MutableStateFlow

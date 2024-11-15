@@ -24,8 +24,8 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
 
-    private val _editedPriority = MutableLiveData<Priority>()
-    val editedPriority: LiveData<Priority> get() = _editedPriority
+    private val _editedPriority = MutableStateFlow(Priority.LOW)
+    val editedPriority: StateFlow<Priority> get() = _editedPriority
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()
@@ -76,6 +76,10 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
         }
+    }
+
+    fun updatedEditPriority(priority: Priority) {
+        _editedPriority.value = priority
     }
 
     fun setInitialPriority(priority: Priority) {

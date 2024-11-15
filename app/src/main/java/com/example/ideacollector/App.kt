@@ -1,8 +1,14 @@
-package com.example.ideacollector.di
+package com.example.ideacollector
 
 import android.app.Application
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.ideacollector.di.PREFERENCES
+import com.example.ideacollector.managers.ThemeManager
+import com.example.ideacollector.di.dataModule
+import com.example.ideacollector.di.interactorModule
+import com.example.ideacollector.di.repositoryModule
+import com.example.ideacollector.di.viewModelModule
 import com.example.ideacollector.settings.data.storage.THEME_KEY
 import com.example.ideacollector.settings.domain.models.Theme
 import org.koin.android.ext.koin.androidContext
@@ -10,6 +16,13 @@ import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
     private var darkTheme: Theme = Theme.LIGHT
+
+    // TODO - перенести логику в ThemeManager
+//        val themeManager = ThemeManager()
+//        themeManager.currentTheme.collect {
+//
+//        }
+
     override fun onCreate() {
         super.onCreate()
 
