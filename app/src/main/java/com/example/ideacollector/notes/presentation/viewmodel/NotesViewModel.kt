@@ -1,7 +1,5 @@
 package com.example.ideacollector.notes.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ideacollector.notes.domain.api.NotesInteractor
@@ -18,14 +16,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
-    companion object {
-        const val EMPTY_STRING = ""
-    }
+
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
 
-    private val _editedPriority = MutableLiveData<Priority>()
-    val editedPriority: LiveData<Priority> get() = _editedPriority
+    private val _editedPriority = MutableStateFlow(Priority.LOW)
+    val editedPriority: StateFlow<Priority> get() = _editedPriority
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()
@@ -41,14 +37,14 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             NotesState.Empty
         )
 
-    fun userClickedSaveButton(noteText: String) : String {
+    fun userClickedSaveButton(noteText: String) {
         if (noteText.isNotEmpty()) {
             val noteToAdd = Note(0, _priority.value.toString(), noteText, getCurrentDateTime())
             viewModelScope.launch(Dispatchers.IO) {
                 notesInteractor.addNewNote(noteToAdd)
             }
         }
-        return EMPTY_STRING
+
     }
 
     fun userClickedDeleteNote(noteToDelete: Note) {
@@ -57,8 +53,9 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
         }
     }
 
-    fun userClickedEditNote(oldNote: Note, newNote: Note) {
-        if (newNote.text.isNotEmpty() && (oldNote.text != newNote.text || oldNote.priority != newNote.priority)) {
+    fun userClickedEditNote(oldNote: Note, newText: String, newPriority: String) {
+        val newNote = Note(oldNote.id, newPriority, newText, getCurrentDateTime())
+        if (newText.isNotEmpty() && (oldNote.text != newText || oldNote.priority != newPriority)) {
             saveEditedNote(newNote)
         }
     }
@@ -78,6 +75,10 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
         }
     }
 
+    fun updateEditedPriority(priority: Priority) {
+        _editedPriority.value = priority
+    }
+
     fun setInitialPriority(priority: Priority) {
         _editedPriority.value = priority
     }
@@ -87,7 +88,6 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             Priority.LOW -> Priority.MEDIUM
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
-            else -> Priority.LOW
         }
     }
 }
