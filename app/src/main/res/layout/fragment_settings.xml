@@ -1,19 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".settings.ui.SettingsFragment">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorPrimary"
+    android:orientation="vertical">
+
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settingsToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/headerText"
         app:title="@string/settings_header"
-        app:titleTextAppearance="@style/headerText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        android:layout_marginStart="@dimen/dp4"
+        app:titleTextAppearance="@style/headerText" />
+    <View
+        android:id="@+id/borderView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp1"
+        android:background="@color/gray_border_dark"
+        android:layout_marginHorizontal="@dimen/dp14"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background"
+        android:layout_marginHorizontal="@dimen/dp14"
+        android:paddingVertical="@dimen/dp12"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="@dimen/dp4"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/enablePasswordTV"
+                style="@style/settingsMenuText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_password_header" />
+
+            <TextView
+                android:id="@+id/enablePasswordSettingsTV"
+                style="@style/settingsHintText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_password_settings" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/enablePasswordCheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/setPasswordLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_background"
+            android:layout_marginHorizontal="@dimen/dp14"
+            android:paddingVertical="@dimen/dp12"
+            android:clickable="true"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/setPasswordTV"
+                style="@style/settingsMenuText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/password_header" />
+
+            <TextView
+                android:id="@+id/setPasswordSettingsTV"
+                style="@style/settingsHintText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="@string/password_settings_off" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sortTypeLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background"
+        android:layout_marginHorizontal="@dimen/dp14"
+        android:paddingVertical="@dimen/dp12"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/sortTypeTV"
+            style="@style/settingsMenuText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sorting_header" />
+
+        <TextView
+            android:id="@+id/sortingSettingsTV"
+            style="@style/settingsHintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="@string/sorting_settings_priority" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/themeLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/item_background"
+        android:layout_marginHorizontal="@dimen/dp14"
+        android:paddingVertical="@dimen/dp12"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/themeTV"
+            style="@style/settingsMenuText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/theme_header" />
+
+        <TextView
+            android:id="@+id/themeSettingsTV"
+            style="@style/settingsHintText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="@string/theme_settings_dark" />
+
+    </LinearLayout>
+
+</LinearLayout>

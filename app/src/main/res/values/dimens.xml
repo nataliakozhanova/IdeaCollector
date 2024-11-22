@@ -14,4 +14,6 @@
     <dimen name="dp6">6dp</dimen>
     <dimen name="dp2">2dp</dimen>
     <dimen name="dp64">64dp</dimen>
+    <dimen name="dp14">14dp</dimen>
+    <dimen name="dp1">1dp</dimen>
 </resources>

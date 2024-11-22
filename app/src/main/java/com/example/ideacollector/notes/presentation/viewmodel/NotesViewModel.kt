@@ -8,6 +8,7 @@ import com.example.ideacollector.notes.domain.api.NotesInteractor
 import com.example.ideacollector.notes.domain.models.Note
 import com.example.ideacollector.notes.domain.models.Priority
 import com.example.ideacollector.notes.presentation.models.NotesState
+import com.example.ideacollector.util.getCurrentDateTime
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,6 +18,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
+    companion object {
+        const val EMPTY_STRING = ""
+    }
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
 
@@ -37,22 +41,23 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             NotesState.Empty
         )
 
-    fun saveNoteIfValid(priority: String, noteText: String, noteDate: String) {
+    fun userClickedSaveButton(noteText: String) : String {
         if (noteText.isNotEmpty()) {
-            val noteToAdd = Note(0, priority, noteText, noteDate)
+            val noteToAdd = Note(0, _priority.value.toString(), noteText, getCurrentDateTime())
             viewModelScope.launch(Dispatchers.IO) {
                 notesInteractor.addNewNote(noteToAdd)
             }
         }
+        return EMPTY_STRING
     }
 
-    fun deleteNote(noteToDelete: Note) {
+    fun userClickedDeleteNote(noteToDelete: Note) {
         viewModelScope.launch(Dispatchers.IO) {
             notesInteractor.deleteNote(noteToDelete.id)
         }
     }
 
-    fun editNote(oldNote: Note, newNote: Note) {
+    fun userClickedEditNote(oldNote: Note, newNote: Note) {
         if (newNote.text.isNotEmpty() && (oldNote.text != newNote.text || oldNote.priority != newNote.priority)) {
             saveEditedNote(newNote)
         }
