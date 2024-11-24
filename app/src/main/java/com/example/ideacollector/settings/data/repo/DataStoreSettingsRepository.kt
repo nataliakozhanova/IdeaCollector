@@ -43,7 +43,7 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
         }
     }
 
-    override fun readSortingSettings(): Flow<SortType> {
+    override fun readSortingSettings(): Flow<SortType?> {
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {

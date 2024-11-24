@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val interactorModule = module {
     factory<NotesInteractor> {
-        NotesInteractorImpl(get())
+        NotesInteractorImpl(get(), get())
     }
 
     factory<SettingsInteractor> {
