@@ -12,6 +12,6 @@ val viewModelModule = module {
     }
 
     viewModel{
-        SettingsViewModel(androidApplication(), get())
+        SettingsViewModel(get(), get())
     }
 }
