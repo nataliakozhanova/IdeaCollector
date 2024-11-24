@@ -5,8 +5,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.SORTING_KEY
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.THEME_KEY
 import com.example.ideacollector.settings.domain.api.SettingsRepository
+import com.example.ideacollector.settings.domain.models.SortType
 import com.example.ideacollector.settings.domain.models.Theme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -17,6 +19,7 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
 
     private object PreferencesKeys {
         val THEME_KEY = stringPreferencesKey("theme_key")
+        val SORTING_KEY = stringPreferencesKey("sorting_key")
     }
 
     override fun readThemeSettings(): Flow<Theme?> {
@@ -40,4 +43,24 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
         }
     }
 
+    override fun readSortingSettings(): Flow<SortType> {
+        return dataStore.data
+            .catch { exception ->
+                if (exception is IOException) {
+                    emit(emptyPreferences())
+                } else {
+                    throw exception
+                }
+            }
+            .map { preferences ->
+                val sortType = preferences[SORTING_KEY]
+                sortType?.let { SortType.valueOf(it) } ?: SortType.DATE
+            }
+    }
+
+    override suspend fun writeSortingSettings(sortType: SortType) {
+        dataStore.edit { preferences ->
+            preferences[SORTING_KEY] = sortType.name
+        }
+    }
 }

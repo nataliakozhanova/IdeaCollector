@@ -12,6 +12,6 @@ val interactorModule = module {
     }
 
     factory<SettingsInteractor> {
-        SettingsInteractorImpl()
+        SettingsInteractorImpl(get())
     }
 }
