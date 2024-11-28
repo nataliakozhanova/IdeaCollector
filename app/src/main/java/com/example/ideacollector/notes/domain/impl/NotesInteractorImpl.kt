@@ -30,7 +30,6 @@ class NotesInteractorImpl(
                     runCatching { Priority.valueOf(it.priority).ordinal }.getOrElse { -1 }
                 }
 
-                null -> notes.sortedByDescending { parseDate(it.date) ?: LocalDateTime.MIN }
             }
         }
     }

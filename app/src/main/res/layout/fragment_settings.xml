@@ -80,7 +80,9 @@
         <CheckBox
             android:id="@+id/enablePasswordCheckbox"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/blue"
+            android:button="@drawable/selector_checkbox"/>
 
     </LinearLayout>
 

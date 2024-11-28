@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ideacollector.managers.ThemeManager
 import com.example.ideacollector.settings.domain.api.SettingsInteractor
+import com.example.ideacollector.settings.domain.models.EnablePassword
 import com.example.ideacollector.settings.domain.models.SortType
 import com.example.ideacollector.settings.domain.models.Theme
 import kotlinx.coroutines.CoroutineScope
@@ -23,6 +24,28 @@ class SettingsViewModel(
     private val _currentSortingSettings = MutableStateFlow(SortType.DATE)
     val currentSortingSettings: StateFlow<SortType> get() = _currentSortingSettings
 
+    private val _isPasswordEnabled = MutableStateFlow(EnablePassword(isPasswordEnabled = false))
+    val isPasswordEnabled: StateFlow<EnablePassword> get() = _isPasswordEnabled
+
+    fun getCheckboxIsPasswordEnabled() {
+        CoroutineScope(Dispatchers.Default).launch {
+            settingsInteractor.getEnablePassword()
+                .catch {
+                    _isPasswordEnabled.value = EnablePassword(isPasswordEnabled = false)
+                }
+                .collect { isEnabled ->
+                    _isPasswordEnabled.value = isEnabled
+                }
+        }
+    }
+
+    fun changeCheckboxIsPasswordEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            settingsInteractor.saveEnablePassword(isEnabled)
+            _isPasswordEnabled.value = EnablePassword(isEnabled)
+        }
+    }
+
     fun getSortType() {
         CoroutineScope(Dispatchers.Default).launch {
             settingsInteractor.getSortType()
@@ -30,7 +53,7 @@ class SettingsViewModel(
                     _currentSortingSettings.value = SortType.DATE
                 }
                 .collect { savedSortType ->
-                    _currentSortingSettings.value = savedSortType ?: SortType.DATE
+                    _currentSortingSettings.value = savedSortType
                 }
         }
     }

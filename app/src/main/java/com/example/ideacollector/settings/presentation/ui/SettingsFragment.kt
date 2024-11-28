@@ -40,6 +40,19 @@ class SettingsFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
+            settingsViewModel.getCheckboxIsPasswordEnabled()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsViewModel.isPasswordEnabled.collect { enablePassword ->
+                    binding.enablePasswordCheckbox.isChecked = enablePassword.isPasswordEnabled
+                }
+            }
+        }
+
+
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsViewModel.currentThemeSettings.collect { currentTheme ->
                     renderThemeSettings(currentTheme)
@@ -61,6 +74,10 @@ class SettingsFragment : Fragment() {
 
         binding.sortTypeLL.setOnClickListener {
             settingsViewModel.changeSortType()
+        }
+
+        binding.enablePasswordCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            settingsViewModel.changeCheckboxIsPasswordEnabled(isChecked)
         }
     }
 

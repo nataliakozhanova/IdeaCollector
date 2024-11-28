@@ -15,7 +15,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
+class NotesViewModel(
+    private val notesInteractor: NotesInteractor
+) : ViewModel() {
 
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
