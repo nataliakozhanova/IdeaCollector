@@ -9,4 +9,6 @@ interface SettingsInteractor {
     suspend fun saveSortType(sortType: SortType)
     fun getEnablePassword(): Flow<EnablePassword>
     suspend fun saveEnablePassword(isPasswordEnabled: Boolean)
+    suspend fun setPassword(password: String)
+    suspend fun isPasswordSet(): Boolean
 }

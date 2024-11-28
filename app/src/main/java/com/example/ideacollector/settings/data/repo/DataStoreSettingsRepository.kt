@@ -76,12 +76,10 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
     override fun readEnablePasswordSettings(): Flow<EnablePassword> {
         return dataStore.data
             .catch { exception ->
-                if (exception is IOException) {
-                    emit(emptyPreferences())
-                } else {
-                    throw exception
-                }
-            }.map { preferences ->
+                exception.printStackTrace() // Логируем все ошибки
+                emit(emptyPreferences()) // Эмитим пустые настройки в случае ошибки
+            }
+            .map { preferences ->
                 val isPasswordEnabled = preferences[ENABLE_PASSWORD_KEY] ?: false
                 EnablePassword(isPasswordEnabled)
             }
@@ -109,21 +107,14 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
                     val iv = preferences[PASSWORD_IV_KEY]?.fromBase64()
 
                     if (encryptedPassword != null && iv != null) {
-                        try {
-                            CryptoUtils.decrypt(iv, encryptedPassword)
-                        } catch (e: Exception) {
-                            // Обработка ошибок дешифровки
-                            e.printStackTrace()
-                            null
-                        }
+                        CryptoUtils.decrypt(iv, encryptedPassword)
                     } else {
                         null
                     }
                 }
-                .firstOrNull() // Получаем первое значение потока
+                .firstOrNull() // Берём первое значение потока
         } catch (e: Exception) {
-            // Обработка ошибок чтения DataStore
-            e.printStackTrace()
+            e.printStackTrace() // Логируем ошибки чтения и дешифровки
             null
         }
     }

@@ -8,4 +8,6 @@ interface NotesInteractor {
     suspend fun addNewNote(note: Note)
     suspend fun deleteNote(id: Int)
     suspend fun editNote(note: Note)
+    suspend fun isPasswordEnabled(): Boolean
+    suspend fun isPasswordValid(inputPassword: String): Boolean
 }
