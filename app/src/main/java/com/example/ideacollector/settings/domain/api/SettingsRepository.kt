@@ -12,4 +12,6 @@ interface SettingsRepository {
     suspend fun writeSortingSettings(sortType: SortType)
     fun readEnablePasswordSettings(): Flow<EnablePassword>
     suspend fun writeEnablePasswordSettings(isPasswordEnabled: Boolean)
+    suspend fun savePassword(password: String)
+    suspend fun readPassword(): String?
 }
