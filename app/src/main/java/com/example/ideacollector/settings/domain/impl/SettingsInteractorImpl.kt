@@ -2,7 +2,6 @@ package com.example.ideacollector.settings.domain.impl
 
 import com.example.ideacollector.settings.domain.api.SettingsInteractor
 import com.example.ideacollector.settings.domain.api.SettingsRepository
-import com.example.ideacollector.settings.domain.models.EnablePassword
 import com.example.ideacollector.settings.domain.models.SortType
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +15,7 @@ class SettingsInteractorImpl(private val settingsRepository: SettingsRepository)
         settingsRepository.writeSortingSettings(sortType)
     }
 
-    override fun getEnablePassword(): Flow<EnablePassword> {
+    override fun getEnablePassword(): Flow<Boolean> {
         return settingsRepository.readEnablePasswordSettings()
     }
 
@@ -28,7 +27,4 @@ class SettingsInteractorImpl(private val settingsRepository: SettingsRepository)
         settingsRepository.savePassword(password)
     }
 
-    override suspend fun isPasswordSet(): Boolean {
-        return !settingsRepository.readPassword().isNullOrEmpty()
-    }
 }

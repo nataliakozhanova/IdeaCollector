@@ -51,21 +51,14 @@ class NotesInteractorImpl(
         return try {
             settingsRepository.readEnablePasswordSettings()
                 .first() // Получаем первое значение из потока
-                .isPasswordEnabled
         } catch (e: Exception) {
             e.printStackTrace()
             false // Если произошла ошибка, возвращаем false
         }
     }
 
-    // Проверка сохранённого пароля
     override suspend fun isPasswordValid(inputPassword: String): Boolean {
-        return try {
-            val savedPassword = settingsRepository.readPassword()
-            inputPassword == savedPassword
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false // Если произошла ошибка, считаем пароль недействительным
-        }
+        TODO("Not yet implemented")
     }
+
 }

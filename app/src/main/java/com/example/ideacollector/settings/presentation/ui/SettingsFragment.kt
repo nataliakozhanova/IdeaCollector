@@ -33,37 +33,26 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        renderThemeSettings(settingsViewModel.currentThemeSettings.value)
-
         viewLifecycleOwner.lifecycleScope.launch {
-            settingsViewModel.getSortType()
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            settingsViewModel.getCheckboxIsPasswordEnabled()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsViewModel.sortTypeState.collect { sortType ->
+                    renderSortTypeSettings(sortType)
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsViewModel.isPasswordEnabled.collect { enablePassword ->
-                    binding.enablePasswordCheckbox.isChecked = enablePassword.isPasswordEnabled
+                    binding.enablePasswordCheckbox.isChecked = enablePassword
                 }
             }
         }
-
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsViewModel.currentThemeSettings.collect { currentTheme ->
                     renderThemeSettings(currentTheme)
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingsViewModel.currentSortingSettings.collect { currentSortType ->
-                    renderSortTypeSettings(currentSortType)
                 }
             }
         }

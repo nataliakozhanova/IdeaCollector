@@ -12,13 +12,11 @@ import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.SORTING_KEY
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.THEME_KEY
 import com.example.ideacollector.settings.domain.api.SettingsRepository
-import com.example.ideacollector.settings.domain.models.EnablePassword
 import com.example.ideacollector.settings.domain.models.SortType
 import com.example.ideacollector.settings.domain.models.Theme
 import com.example.ideacollector.util.CryptoUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core.DataStore<Preferences>) :
@@ -73,15 +71,14 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
         }
     }
 
-    override fun readEnablePasswordSettings(): Flow<EnablePassword> {
+    override fun readEnablePasswordSettings(): Flow<Boolean> {
         return dataStore.data
             .catch { exception ->
                 exception.printStackTrace() // Логируем все ошибки
                 emit(emptyPreferences()) // Эмитим пустые настройки в случае ошибки
             }
             .map { preferences ->
-                val isPasswordEnabled = preferences[ENABLE_PASSWORD_KEY] ?: false
-                EnablePassword(isPasswordEnabled)
+                preferences[ENABLE_PASSWORD_KEY] ?: false // Если ключ отсутствует, возвращаем false
             }
     }
 
@@ -99,26 +96,44 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
         }
     }
 
-    override suspend fun readPassword(): String? {
-        return try {
-            dataStore.data
-                .map { preferences ->
-                    val encryptedPassword = preferences[PASSWORD_KEY]?.fromBase64()
-                    val iv = preferences[PASSWORD_IV_KEY]?.fromBase64()
+    override fun checkPassword(inputtedPassword: String): Flow<Boolean> {
+        return dataStore.data
+            .map { preferences ->
+                val encryptedPassword = preferences[PASSWORD_KEY]?.fromBase64()
+                val iv = preferences[PASSWORD_IV_KEY]?.fromBase64()
 
-                    if (encryptedPassword != null && iv != null) {
-                        CryptoUtils.decrypt(iv, encryptedPassword)
-                    } else {
-                        null
+                if (encryptedPassword != null && iv != null) {
+                    try {
+                        val savedPassword = CryptoUtils.decrypt(iv, encryptedPassword)
+                        if (savedPassword.isEmpty()) {
+                            inputtedPassword.isEmpty()
+                        } else {
+                            savedPassword == inputtedPassword
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        false
                     }
+                } else {
+                    inputtedPassword.isEmpty()
                 }
-                .firstOrNull() // Берём первое значение потока
-        } catch (e: Exception) {
-            e.printStackTrace() // Логируем ошибки чтения и дешифровки
-            null
+            }
+            .catch { e ->
+                e.printStackTrace()
+                emit(false)
+            }
+    }
+
+    override suspend fun deletePassword() {
+        dataStore.edit { preferences ->
+            preferences.remove(PASSWORD_KEY)
+            preferences.remove(PASSWORD_IV_KEY)
         }
     }
 
-    private fun ByteArray.toBase64(): String = android.util.Base64.encodeToString(this, android.util.Base64.DEFAULT)
-    private fun String.fromBase64(): ByteArray = android.util.Base64.decode(this, android.util.Base64.DEFAULT)
+    private fun ByteArray.toBase64(): String =
+        android.util.Base64.encodeToString(this, android.util.Base64.DEFAULT)
+
+    private fun String.fromBase64(): ByteArray =
+        android.util.Base64.decode(this, android.util.Base64.DEFAULT)
 }
