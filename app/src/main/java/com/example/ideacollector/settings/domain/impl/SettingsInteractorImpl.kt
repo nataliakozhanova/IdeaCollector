@@ -27,4 +27,8 @@ class SettingsInteractorImpl(private val settingsRepository: SettingsRepository)
         settingsRepository.savePassword(password)
     }
 
+    override suspend fun deletePassword() {
+        settingsRepository.deletePassword()
+    }
+
 }

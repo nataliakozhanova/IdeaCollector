@@ -25,4 +25,7 @@
     <string name="dialog_password">Password</string>
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_password_header">Type password...</string>
+    <string name="dialog_error_password_mismatch">Passwords mismatch</string>
+    <string name="dialog_error_password_incorrect">Password is incorrect</string>
+
 </resources>

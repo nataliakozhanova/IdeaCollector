@@ -9,4 +9,5 @@ interface SettingsInteractor {
     fun getEnablePassword(): Flow<Boolean>
     suspend fun saveEnablePassword(isPasswordEnabled: Boolean)
     suspend fun setPassword(password: String)
+    suspend fun deletePassword()
 }

@@ -126,8 +126,13 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
 
     override suspend fun deletePassword() {
         dataStore.edit { preferences ->
-            preferences.remove(PASSWORD_KEY)
-            preferences.remove(PASSWORD_IV_KEY)
+            // Удаляем только если ключи существуют
+            if (preferences.contains(PASSWORD_KEY)) {
+                preferences.remove(PASSWORD_KEY)
+            }
+            if (preferences.contains(PASSWORD_IV_KEY)) {
+                preferences.remove(PASSWORD_IV_KEY)
+            }
         }
     }
 
