@@ -2,11 +2,14 @@ package com.example.ideacollector.notes.presentation.ui
 
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -58,6 +61,20 @@ class NotesFragment : Fragment() {
 
         binding.inputText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         binding.inputTextLayout.isEndIconCheckable = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notesViewModel.isPasswordEnabled.collect { isPasswordEnabled ->
+                    renderLockScreen(isPasswordEnabled)
+                }
+            }
+        }
+
+        binding.passEnabledIV.setOnClickListener {
+            showCheckPasswordDialog {
+                renderLockScreen(false)
+            }
+        }
 
         binding.notesRecyclerView.adapter = notesAdapter
 
@@ -216,6 +233,73 @@ class NotesFragment : Fragment() {
             }
             .show()
 
+    }
+
+    private fun renderLockScreen(isPasswordEnabled: Boolean) {
+        with(binding) {
+            notesRecyclerView.isVisible = !isPasswordEnabled
+            passEnabledView.isVisible = isPasswordEnabled
+            passEnabledIV.isVisible = isPasswordEnabled
+        }
+    }
+
+    private fun showCheckPasswordDialog(onPasswordSuccess: () -> Unit) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_check_password, null)
+        val checkPasswordInputLayout =
+            dialogView.findViewById<TextInputLayout>(R.id.checkPasswordInputLayout)
+        val checkPasswordEditText = dialogView.findViewById<EditText>(R.id.checkPasswordEditText)
+
+        val titleView = TextView(requireContext()).apply {
+            text = getString(R.string.dialog_password_header)
+            setTextAppearance(R.style.dialogHeaderPasswordText) // Применяем стиль
+            setPadding(40, 40, 40, 40) // Устанавливаем отступы
+            gravity = Gravity.CENTER // Центрируем текст
+        }
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setCustomTitle(titleView)
+            .setView(dialogView)
+            .setPositiveButton(R.string.dialog_ok_button, null)
+            .setNegativeButton(R.string.dialog_cancel_button) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+                val password = checkPasswordEditText.text?.toString()?.trim() ?: ""
+
+                // Сбрасываем ошибки
+                checkPasswordInputLayout.error = null
+
+                // Не блокируем UI, пока ждём результат
+                notesViewModel.checkPassword(password)
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        notesViewModel.passwordCheckResult.collect { isPasswordCorrect ->
+                            if (isPasswordCorrect == null) return@collect // Ждём результат
+
+                            if (isPasswordCorrect) {
+                                onPasswordSuccess() // Успех
+                                notesViewModel.resetPasswordCheckResult()
+                                dialog.dismiss()
+                            } else {
+                                checkPasswordInputLayout.error =
+                                    getString(R.string.dialog_error_password_incorrect)
+                            }
+                        }
+                    }
+                }
+            }
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+                ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue))
+        }
+
+        dialog.show()
     }
 
     override fun onDestroyView() {

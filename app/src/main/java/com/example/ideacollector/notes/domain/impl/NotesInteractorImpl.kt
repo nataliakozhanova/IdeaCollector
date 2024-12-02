@@ -9,7 +9,6 @@ import com.example.ideacollector.settings.domain.models.SortType
 import com.example.ideacollector.util.parseDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import java.time.LocalDateTime
 
 class NotesInteractorImpl(
@@ -47,18 +46,11 @@ class NotesInteractorImpl(
         notesRepository.updateNote(note)
     }
 
-    override suspend fun isPasswordEnabled(): Boolean {
-        return try {
-            settingsRepository.readEnablePasswordSettings()
-                .first() // Получаем первое значение из потока
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false // Если произошла ошибка, возвращаем false
-        }
+    override fun getEnablePassword(): Flow<Boolean> {
+        return settingsRepository.readEnablePasswordSettings()
     }
 
-    override suspend fun isPasswordValid(inputPassword: String): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun checkPassword(inputtedPassword: String): Flow<Boolean> {
+        return settingsRepository.checkPassword(inputtedPassword)
     }
-
 }

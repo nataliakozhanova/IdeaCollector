@@ -17,6 +17,8 @@ import com.example.ideacollector.settings.domain.models.Theme
 import com.example.ideacollector.util.CryptoUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core.DataStore<Preferences>) :
@@ -97,12 +99,13 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
     }
 
     override fun checkPassword(inputtedPassword: String): Flow<Boolean> {
-        return dataStore.data
-            .map { preferences ->
+        return flow {
+            try {
+                val preferences = dataStore.data.first()
                 val encryptedPassword = preferences[PASSWORD_KEY]?.fromBase64()
                 val iv = preferences[PASSWORD_IV_KEY]?.fromBase64()
 
-                if (encryptedPassword != null && iv != null) {
+                val isPasswordCorrect = if (encryptedPassword != null && iv != null) {
                     try {
                         val savedPassword = CryptoUtils.decrypt(iv, encryptedPassword)
                         if (savedPassword.isEmpty()) {
@@ -117,12 +120,14 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
                 } else {
                     inputtedPassword.isEmpty()
                 }
-            }
-            .catch { e ->
+                emit(isPasswordCorrect) // Эмитим результат проверки
+            } catch (e: Exception) {
                 e.printStackTrace()
-                emit(false)
+                emit(false) // Эмитим false в случае ошибки
             }
+        }
     }
+
 
     override suspend fun deletePassword() {
         dataStore.edit { preferences ->
