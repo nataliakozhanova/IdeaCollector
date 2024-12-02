@@ -11,12 +11,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class NotesViewModel(
-    private val notesInteractor: NotesInteractor
+    private val notesInteractor: NotesInteractor,
 ) : ViewModel() {
 
     private val _priority = MutableStateFlow(Priority.LOW)
@@ -28,11 +29,27 @@ class NotesViewModel(
     private val _passwordCheckResult = MutableStateFlow<Boolean?>(null)
     val passwordCheckResult: StateFlow<Boolean?> get() = _passwordCheckResult
 
-    val isPasswordEnabled = notesInteractor.getEnablePassword().stateIn(
+    private val isPasswordEnabled = notesInteractor.getEnablePassword().stateIn(
         viewModelScope,
         SharingStarted.Lazily,
         false
     )
+
+    private val _isManuallyUnlocked = MutableStateFlow(false)
+    val isScreenUnlocked: StateFlow<Boolean> = combine(
+        isPasswordEnabled,
+        _isManuallyUnlocked
+    ) { isEnabled, isManuallyUnlocked ->
+        !isEnabled || isManuallyUnlocked // Если пароль не установлен, экран всегда разблокирован
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
+    )
+
+    fun unlockScreen(isUnlocked: Boolean) {
+        _isManuallyUnlocked.value = isUnlocked
+    }
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()

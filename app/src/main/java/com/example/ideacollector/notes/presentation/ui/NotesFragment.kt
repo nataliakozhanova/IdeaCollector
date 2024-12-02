@@ -62,17 +62,25 @@ class NotesFragment : Fragment() {
         binding.inputText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         binding.inputTextLayout.isEndIconCheckable = false
 
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                notesViewModel.isPasswordEnabled.collect { isPasswordEnabled ->
+//                    renderLockScreen(isPasswordEnabled)
+//                }
+//            }
+//        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                notesViewModel.isPasswordEnabled.collect { isPasswordEnabled ->
-                    renderLockScreen(isPasswordEnabled)
+                notesViewModel.isScreenUnlocked.collect { isUnlocked ->
+                    renderLockScreen(isUnlocked)
                 }
             }
         }
 
         binding.passEnabledIV.setOnClickListener {
             showCheckPasswordDialog {
-                renderLockScreen(false)
+                notesViewModel.unlockScreen(true)
             }
         }
 
@@ -102,11 +110,17 @@ class NotesFragment : Fragment() {
         }
 
         binding.inputTextLayout.setEndIconOnLongClickListener {
-            findNavController().navigate(
-                R.id.action_notesFragment_to_settingsFragment
-            )
+            if (notesViewModel.isScreenUnlocked.value) {
+                navigateToSettings()
+            } else {
+                showCheckPasswordDialog {
+                    notesViewModel.unlockScreen(true)
+                    navigateToSettings()
+                }
+            }
             true
         }
+
 
         binding.inputTextLayout.setStartIconOnClickListener {
             notesViewModel.updatePriority()
@@ -235,11 +249,11 @@ class NotesFragment : Fragment() {
 
     }
 
-    private fun renderLockScreen(isPasswordEnabled: Boolean) {
+    private fun renderLockScreen(isScreenUnlocked: Boolean) {
         with(binding) {
-            notesRecyclerView.isVisible = !isPasswordEnabled
-            passEnabledView.isVisible = isPasswordEnabled
-            passEnabledIV.isVisible = isPasswordEnabled
+            notesRecyclerView.isVisible = isScreenUnlocked
+            passEnabledView.isVisible = !isScreenUnlocked
+            passEnabledIV.isVisible = !isScreenUnlocked
         }
     }
 
@@ -300,6 +314,17 @@ class NotesFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    private fun navigateToSettings() {
+        findNavController().navigate(
+            R.id.action_notesFragment_to_settingsFragment
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        notesViewModel.unlockScreen(false) // Блокируем экран при сворачивании приложения
     }
 
     override fun onDestroyView() {
