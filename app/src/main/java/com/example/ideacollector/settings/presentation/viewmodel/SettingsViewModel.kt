@@ -20,8 +20,11 @@ class SettingsViewModel(
     private val _currentThemeSettings = MutableStateFlow(themeManager.currentTheme.value)
     val currentThemeSettings: StateFlow<Theme> get() = _currentThemeSettings
 
-    private val _isPasswordSet = MutableStateFlow(false)
-    val isPasswordSet: StateFlow<Boolean> get() = _isPasswordSet
+    val isPasswordSet: StateFlow<Boolean> get() = settingsInteractor.getIsPasswordSet().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
+    )
 
     val isPasswordEnabled = settingsInteractor.getEnablePassword().stateIn(
         viewModelScope,
@@ -34,7 +37,8 @@ class SettingsViewModel(
             if (!isEnabled) {
                 // Удаляем пароль при отключении чекбокса
                 settingsInteractor.deletePassword()
-                _isPasswordSet.value = false
+                // Сохраняем состояние настройки isPasswordSet
+                settingsInteractor.saveIsPasswordSet(false)
             }
             // Сохраняем состояние чекбокса
             settingsInteractor.saveEnablePassword(isEnabled)
@@ -44,7 +48,7 @@ class SettingsViewModel(
     fun setPassword(password: String) {
         viewModelScope.launch {
             settingsInteractor.setPassword(password)
-            _isPasswordSet.value = true
+            settingsInteractor.saveIsPasswordSet(true)
         }
     }
 

@@ -31,4 +31,12 @@ class SettingsInteractorImpl(private val settingsRepository: SettingsRepository)
         settingsRepository.deletePassword()
     }
 
+    override fun getIsPasswordSet(): Flow<Boolean> {
+        return settingsRepository.readIsPasswordSet()
+    }
+
+    override suspend fun saveIsPasswordSet(isPasswordSet: Boolean) {
+        settingsRepository.writeIsPasswordSet(isPasswordSet)
+    }
+
 }

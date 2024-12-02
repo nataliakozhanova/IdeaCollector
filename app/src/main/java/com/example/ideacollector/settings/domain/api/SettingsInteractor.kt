@@ -10,4 +10,6 @@ interface SettingsInteractor {
     suspend fun saveEnablePassword(isPasswordEnabled: Boolean)
     suspend fun setPassword(password: String)
     suspend fun deletePassword()
+    fun getIsPasswordSet() : Flow<Boolean>
+    suspend fun saveIsPasswordSet(isPasswordSet: Boolean)
 }

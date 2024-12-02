@@ -14,4 +14,6 @@ interface SettingsRepository {
     suspend fun savePassword(password: String)
     fun checkPassword(inputtedPassword: String): Flow<Boolean>
     suspend fun deletePassword()
+    fun readIsPasswordSet(): Flow<Boolean>
+    suspend fun writeIsPasswordSet(isPasswordSet: Boolean)
 }

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.ENABLE_PASSWORD_KEY
+import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.IS_PASSWORD_SET_KEY
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.PASSWORD_IV_KEY
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.PASSWORD_KEY
 import com.example.ideacollector.settings.data.repo.DataStoreSettingsRepository.PreferencesKeys.SORTING_KEY
@@ -29,6 +30,7 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
         val ENABLE_PASSWORD_KEY = booleanPreferencesKey("enable_password_key")
         val PASSWORD_KEY = stringPreferencesKey("password")
         val PASSWORD_IV_KEY = stringPreferencesKey("password_iv")
+        val IS_PASSWORD_SET_KEY = booleanPreferencesKey("is_password_set_key")
     }
 
     override fun readThemeSettings(): Flow<Theme?> {
@@ -138,6 +140,23 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
             if (preferences.contains(PASSWORD_IV_KEY)) {
                 preferences.remove(PASSWORD_IV_KEY)
             }
+        }
+    }
+
+    override fun readIsPasswordSet(): Flow<Boolean> {
+        return dataStore.data
+            .catch { exception ->
+                exception.printStackTrace() // Логируем все ошибки
+                emit(emptyPreferences()) // Эмитим пустые настройки в случае ошибки
+            }
+            .map { preferences ->
+                preferences[IS_PASSWORD_SET_KEY] ?: false // Если ключ отсутствует, возвращаем false
+            }
+    }
+
+    override suspend fun writeIsPasswordSet(isPasswordSet: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[IS_PASSWORD_SET_KEY] = isPasswordSet
         }
     }
 
