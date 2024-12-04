@@ -102,6 +102,7 @@ class SettingsFragment : Fragment() {
         when (theme) {
             Theme.LIGHT -> binding.themeSettingsTV.setText(R.string.theme_settings_light)
             Theme.DARK -> binding.themeSettingsTV.setText(R.string.theme_settings_dark)
+            Theme.SYSTEM -> binding.themeSettingsTV.setText(R.string.theme_settings_system)
         }
     }
 

@@ -73,6 +73,7 @@ class SettingsViewModel(
             _currentThemeSettings.value = when (_currentThemeSettings.value) {
                 Theme.LIGHT -> Theme.DARK
                 Theme.DARK -> Theme.LIGHT
+                Theme.SYSTEM -> Theme.SYSTEM
             }
             themeManager.saveTheme(_currentThemeSettings.value)
         }

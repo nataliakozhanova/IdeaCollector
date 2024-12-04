@@ -22,6 +22,7 @@
     <string name="theme_header">Theme</string>
     <string name="theme_settings_light">Light</string>
     <string name="theme_settings_dark">Dark</string>
+    <string name="theme_settings_system">System</string>
     <string name="dialog_password">Password</string>
     <string name="dialog_confirm">Confirm</string>
     <string name="dialog_password_header">Type password...</string>

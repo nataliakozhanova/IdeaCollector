@@ -1,5 +1,6 @@
 package com.example.ideacollector.settings.data.repo
 
+import android.content.res.Configuration
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -34,7 +35,7 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
     }
 
     override fun readThemeSettings(): Flow<Theme?> {
-        val theme: Flow<Theme?> = dataStore.data
+        val theme: Flow<Theme> = dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
                     emit(emptyPreferences())
@@ -42,8 +43,8 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
                     throw exception
                 }
             }.map { preferences ->
-                val themeName = preferences[THEME_KEY]
-                themeName?.let { Theme.valueOf(it) }
+                val themeName = preferences[THEME_KEY] ?: "system"
+                Theme.valueOf(themeName)
             }
         return theme
     }
