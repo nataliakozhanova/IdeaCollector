@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.ideacollector.R
 import com.example.ideacollector.databinding.FragmentSettingsBinding
+import com.example.ideacollector.settings.domain.models.SortType
 import com.example.ideacollector.settings.domain.models.Theme
 import com.example.ideacollector.settings.presentation.viewmodel.SettingsViewModel
 import kotlinx.coroutines.launch
@@ -35,6 +36,10 @@ class SettingsFragment : Fragment() {
         renderThemeSettings(settingsViewModel.currentThemeSettings.value)
 
         viewLifecycleOwner.lifecycleScope.launch {
+            settingsViewModel.getSortType()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 settingsViewModel.currentThemeSettings.collect { currentTheme ->
                     renderThemeSettings(currentTheme)
@@ -42,8 +47,20 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                settingsViewModel.currentSortingSettings.collect { currentSortType ->
+                    renderSortTypeSettings(currentSortType)
+                }
+            }
+        }
+
         binding.themeLL.setOnClickListener {
             settingsViewModel.changeTheme()
+        }
+
+        binding.sortTypeLL.setOnClickListener {
+            settingsViewModel.changeSortType()
         }
     }
 
@@ -56,6 +73,13 @@ class SettingsFragment : Fragment() {
         when (theme) {
             Theme.LIGHT -> binding.themeSettingsTV.setText(R.string.theme_settings_light)
             Theme.DARK -> binding.themeSettingsTV.setText(R.string.theme_settings_dark)
+        }
+    }
+
+    private fun renderSortTypeSettings(sortType: SortType) {
+        when (sortType) {
+            SortType.PRIORITY -> binding.sortingSettingsTV.setText(R.string.sorting_settings_priority)
+            SortType.DATE -> binding.sortingSettingsTV.setText(R.string.sorting_settings_date)
         }
     }
 }
