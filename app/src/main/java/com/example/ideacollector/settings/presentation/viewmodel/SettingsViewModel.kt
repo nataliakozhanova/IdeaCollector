@@ -6,11 +6,11 @@ import com.example.ideacollector.managers.ThemeManager
 import com.example.ideacollector.settings.domain.api.SettingsInteractor
 import com.example.ideacollector.settings.domain.models.SortType
 import com.example.ideacollector.settings.domain.models.Theme
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
@@ -20,37 +20,60 @@ class SettingsViewModel(
     private val _currentThemeSettings = MutableStateFlow(themeManager.currentTheme.value)
     val currentThemeSettings: StateFlow<Theme> get() = _currentThemeSettings
 
-    private val _currentSortingSettings = MutableStateFlow(SortType.DATE)
-    val currentSortingSettings: StateFlow<SortType> get() = _currentSortingSettings
+    val isPasswordSet: StateFlow<Boolean> get() = settingsInteractor.getIsPasswordSet().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
+    )
 
-    fun getSortType() {
-        CoroutineScope(Dispatchers.Default).launch {
-            settingsInteractor.getSortType()
-                .catch {
-                    _currentSortingSettings.value = SortType.DATE
-                }
-                .collect { savedSortType ->
-                    _currentSortingSettings.value = savedSortType ?: SortType.DATE
-                }
+    val isPasswordEnabled = settingsInteractor.getEnablePassword().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
+    )
+
+    fun changeCheckboxIsPasswordEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            if (!isEnabled) {
+                // Удаляем пароль при отключении чекбокса
+                settingsInteractor.deletePassword()
+                // Сохраняем состояние настройки isPasswordSet
+                settingsInteractor.saveIsPasswordSet(false)
+            }
+            // Сохраняем состояние чекбокса
+            settingsInteractor.saveEnablePassword(isEnabled)
         }
     }
 
-    fun changeSortType() {
-        _currentSortingSettings.value = when (_currentSortingSettings.value) {
-            SortType.PRIORITY -> SortType.DATE
-            SortType.DATE -> SortType.PRIORITY
+    fun setPassword(password: String) {
+        viewModelScope.launch {
+            settingsInteractor.setPassword(password)
+            settingsInteractor.saveIsPasswordSet(true)
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            settingsInteractor.saveSortType(_currentSortingSettings.value)
+    }
+
+    val sortTypeState = settingsInteractor.getSortType().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        SortType.DATE
+    )
+
+    fun changeSortType() {
+        viewModelScope.launch {
+            val newSortType = when (sortTypeState.value) {
+                SortType.PRIORITY -> SortType.DATE
+                SortType.DATE -> SortType.PRIORITY
+            }
+            settingsInteractor.saveSortType(newSortType)
         }
     }
 
     fun changeTheme() {
-        _currentThemeSettings.value = when (_currentThemeSettings.value) {
-            Theme.LIGHT -> Theme.DARK
-            Theme.DARK -> Theme.LIGHT
-        }
         viewModelScope.launch(Dispatchers.IO) {
+            _currentThemeSettings.value = when (_currentThemeSettings.value) {
+                Theme.LIGHT -> Theme.DARK
+                Theme.DARK -> Theme.LIGHT
+            }
             themeManager.saveTheme(_currentThemeSettings.value)
         }
     }

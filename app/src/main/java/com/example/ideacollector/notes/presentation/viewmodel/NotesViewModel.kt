@@ -11,17 +11,45 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel() {
+class NotesViewModel(
+    private val notesInteractor: NotesInteractor,
+) : ViewModel() {
 
     private val _priority = MutableStateFlow(Priority.LOW)
     val priority: StateFlow<Priority> get() = _priority
 
     private val _editedPriority = MutableStateFlow(Priority.LOW)
     val editedPriority: StateFlow<Priority> get() = _editedPriority
+
+    private val _passwordCheckResult = MutableStateFlow<Boolean?>(null)
+    val passwordCheckResult: StateFlow<Boolean?> get() = _passwordCheckResult
+
+    private val isPasswordEnabled = notesInteractor.getEnablePassword().stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
+    )
+
+    private val _isManuallyUnlocked = MutableStateFlow(false)
+    val isScreenUnlocked: StateFlow<Boolean> = combine(
+        isPasswordEnabled,
+        _isManuallyUnlocked
+    ) { isEnabled, isManuallyUnlocked ->
+        !isEnabled || isManuallyUnlocked // Если пароль не установлен, экран всегда разблокирован
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.Lazily,
+        false
+    )
+
+    fun unlockScreen(isUnlocked: Boolean) {
+        _isManuallyUnlocked.value = isUnlocked
+    }
 
     val allNotes: StateFlow<NotesState> = notesInteractor
         .getAllNotes()
@@ -89,5 +117,23 @@ class NotesViewModel(private val notesInteractor: NotesInteractor) : ViewModel()
             Priority.MEDIUM -> Priority.HIGH
             Priority.HIGH -> Priority.LOW
         }
+    }
+
+    fun checkPassword(inputtedPassword: String) {
+        viewModelScope.launch {
+            try {
+                notesInteractor.checkPassword(inputtedPassword).collect { result ->
+                    _passwordCheckResult.value = result
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _passwordCheckResult.value = false
+            }
+        }
+    }
+
+    // Сбрасываем состояние после обработки результата
+    fun resetPasswordCheckResult() {
+        _passwordCheckResult.value = null
     }
 }

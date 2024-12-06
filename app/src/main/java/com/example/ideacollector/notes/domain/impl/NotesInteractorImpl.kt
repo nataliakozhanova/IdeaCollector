@@ -30,7 +30,6 @@ class NotesInteractorImpl(
                     runCatching { Priority.valueOf(it.priority).ordinal }.getOrElse { -1 }
                 }
 
-                null -> notes.sortedByDescending { parseDate(it.date) ?: LocalDateTime.MIN }
             }
         }
     }
@@ -47,4 +46,11 @@ class NotesInteractorImpl(
         notesRepository.updateNote(note)
     }
 
+    override fun getEnablePassword(): Flow<Boolean> {
+        return settingsRepository.readEnablePasswordSettings()
+    }
+
+    override suspend fun checkPassword(inputtedPassword: String): Flow<Boolean> {
+        return settingsRepository.checkPassword(inputtedPassword)
+    }
 }
