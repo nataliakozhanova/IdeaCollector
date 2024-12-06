@@ -16,7 +16,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.ideacollector.R
 import com.example.ideacollector.databinding.FragmentSettingsBinding
 import com.example.ideacollector.settings.domain.models.SortType
-import com.example.ideacollector.settings.domain.models.Theme
 import com.example.ideacollector.settings.presentation.viewmodel.SettingsViewModel
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
@@ -98,11 +97,10 @@ class SettingsFragment : Fragment() {
         _binding = null
     }
 
-    private fun renderThemeSettings(theme: Theme) {
-        when (theme) {
-            Theme.LIGHT -> binding.themeSettingsTV.setText(R.string.theme_settings_light)
-            Theme.DARK -> binding.themeSettingsTV.setText(R.string.theme_settings_dark)
-        }
+    private fun renderThemeSettings(isDarkTheme: Boolean) {
+        if (isDarkTheme) {
+            binding.themeSettingsTV.setText(R.string.theme_settings_dark)
+        } else {binding.themeSettingsTV.setText(R.string.theme_settings_light)}
     }
 
     private fun renderSortTypeSettings(sortType: SortType) {

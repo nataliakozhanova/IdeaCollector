@@ -1,12 +1,12 @@
 package com.example.ideacollector.settings.domain.api
 
 import com.example.ideacollector.settings.domain.models.SortType
-import com.example.ideacollector.settings.domain.models.Theme
+import com.example.ideacollector.settings.domain.models.ThemeSettings
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {
-    fun readThemeSettings(): Flow<Theme?>
-    suspend fun writeThemeSetting(theme: Theme)
+    fun readThemeSettings(): Flow<ThemeSettings>
+    suspend fun writeThemeSetting(isDarkTheme: Boolean)
     fun readSortingSettings(): Flow<SortType>
     suspend fun writeSortingSettings(sortType: SortType)
     fun readEnablePasswordSettings(): Flow<Boolean>

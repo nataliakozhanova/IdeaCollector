@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.ideacollector.managers.ThemeManager
 import com.example.ideacollector.settings.domain.api.SettingsInteractor
 import com.example.ideacollector.settings.domain.models.SortType
-import com.example.ideacollector.settings.domain.models.Theme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +17,7 @@ class SettingsViewModel(
     private val themeManager: ThemeManager,
 ) : ViewModel() {
     private val _currentThemeSettings = MutableStateFlow(themeManager.currentTheme.value)
-    val currentThemeSettings: StateFlow<Theme> get() = _currentThemeSettings
+    val currentThemeSettings: StateFlow<Boolean> get() = _currentThemeSettings
 
     val isPasswordSet: StateFlow<Boolean> get() = settingsInteractor.getIsPasswordSet().stateIn(
         viewModelScope,
@@ -71,8 +70,8 @@ class SettingsViewModel(
     fun changeTheme() {
         viewModelScope.launch(Dispatchers.IO) {
             _currentThemeSettings.value = when (_currentThemeSettings.value) {
-                Theme.LIGHT -> Theme.DARK
-                Theme.DARK -> Theme.LIGHT
+                true -> false
+                false -> true
             }
             themeManager.saveTheme(_currentThemeSettings.value)
         }
