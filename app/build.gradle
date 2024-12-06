@@ -58,8 +58,12 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     // Materials
     implementation(libs.material)
+
     // корутины
     implementation(libs.kotlinx.coroutines.android)
+    // хранение настроек
+    implementation libs.androidx.datastore.preferences
+    implementation libs.androidx.datastore.core
 
     // DI зависимости
     implementation(libs.koin.android)

@@ -20,14 +20,12 @@ import com.example.ideacollector.notes.domain.models.Note
 import com.example.ideacollector.notes.domain.models.Priority
 import com.example.ideacollector.notes.presentation.models.NotesState
 import com.example.ideacollector.notes.presentation.viewmodel.NotesViewModel
-import com.example.ideacollector.util.getCurrentDateTime
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@Suppress("WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
 class NotesFragment : Fragment() {
 
     private var _binding: FragmentNotesBinding? = null
@@ -82,7 +80,8 @@ class NotesFragment : Fragment() {
 
         binding.inputTextLayout.setEndIconOnClickListener {
             val noteText = binding.inputText.text.toString()
-            binding.inputText.setText(notesViewModel.userClickedSaveButton(noteText))
+            notesViewModel.userClickedSaveButton(noteText)
+            binding.inputText.setText("")
         }
 
         binding.inputTextLayout.setEndIconOnLongClickListener {
@@ -129,8 +128,7 @@ class NotesFragment : Fragment() {
 
     private fun onEditNoteClick(oldNote: Note) {
         showEditNoteDialog(oldNote.text, oldNote.priority) { newText, newPriority ->
-            val newNote = Note(oldNote.id, newPriority, newText, getCurrentDateTime())
-            notesViewModel.userClickedEditNote(oldNote, newNote)
+            notesViewModel.userClickedEditNote(oldNote, newText, newPriority)
         }
     }
 
@@ -139,22 +137,26 @@ class NotesFragment : Fragment() {
         initialPriority: String,
         onNoteSaved: (String, String) -> Unit,
     ) {
-
+        notesViewModel.updateEditedPriority(Priority.valueOf(initialPriority))
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_note, null)
         val textInputLayout = dialogView.findViewById<TextInputLayout>(R.id.inputEditingTextLayout)
         val editText = dialogView.findViewById<TextInputEditText>(R.id.inputEditingText)
         editText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         editText.setText(initialText)
 
-        notesViewModel.editedPriority.observe(viewLifecycleOwner) { editedPriority ->
-            when (editedPriority) {
-                Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
-                Priority.MEDIUM -> textInputLayout.setStartIconDrawable(iconDrawables[1])
-                Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notesViewModel.editedPriority.collect { editedPriority ->
+                    when (editedPriority) {
+                        Priority.LOW -> textInputLayout.setStartIconDrawable(iconDrawables[2])
+                        Priority.MEDIUM -> textInputLayout.setStartIconDrawable(iconDrawables[1])
+                        Priority.HIGH -> textInputLayout.setStartIconDrawable(iconDrawables[0])
+                    }
+                }
             }
         }
 
-        notesViewModel.setInitialPriority(enumValueOf<Priority>(initialPriority))
+        notesViewModel.setInitialPriority(Priority.valueOf(initialPriority))
 
         textInputLayout.setStartIconOnClickListener {
             notesViewModel.editPriority()

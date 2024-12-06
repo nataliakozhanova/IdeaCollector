@@ -32,11 +32,11 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        renderThemeSettings(settingsViewModel.currentTheme.value)
+        renderThemeSettings(settingsViewModel.currentThemeSettings.value)
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                settingsViewModel.currentTheme.collect { currentTheme ->
+                settingsViewModel.currentThemeSettings.collect { currentTheme ->
                     renderThemeSettings(currentTheme)
                 }
             }

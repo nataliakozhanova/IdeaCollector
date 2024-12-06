@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorPrimary"
-    android:orientation="vertical">
-
+    tools:context=".settings.presentation.ui.SettingsFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/settingsToolbar"
@@ -15,21 +14,45 @@
         android:theme="@style/headerText"
         app:title="@string/settings_header"
         android:layout_marginStart="@dimen/dp4"
-        app:titleTextAppearance="@style/headerText" />
+        app:titleTextAppearance="@style/headerText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/leftBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/dp14" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/rightBorder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/dp14" />
+
     <View
         android:id="@+id/borderView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp1"
         android:background="@color/gray_border_dark"
-        android:layout_marginHorizontal="@dimen/dp14"/>
+        android:layout_marginHorizontal="@dimen/dp14"
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/rightBorder"
+        app:layout_constraintTop_toBottomOf="@+id/settingsToolbar"/>
 
     <LinearLayout
+        android:id="@+id/enablePasswordLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/item_background"
         android:layout_marginHorizontal="@dimen/dp14"
         android:paddingVertical="@dimen/dp12"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/rightBorder"
+        app:layout_constraintTop_toBottomOf="@+id/borderView">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -69,7 +92,10 @@
             android:layout_marginHorizontal="@dimen/dp14"
             android:paddingVertical="@dimen/dp12"
             android:clickable="true"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="@id/leftBorder"
+            app:layout_constraintEnd_toStartOf="@id/rightBorder"
+            app:layout_constraintTop_toBottomOf="@id/enablePasswordLL">
 
             <TextView
                 android:id="@+id/setPasswordTV"
@@ -95,7 +121,10 @@
         android:layout_marginHorizontal="@dimen/dp14"
         android:paddingVertical="@dimen/dp12"
         android:clickable="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/rightBorder"
+        app:layout_constraintTop_toBottomOf="@id/setPasswordLL">
 
         <TextView
             android:id="@+id/sortTypeTV"
@@ -121,7 +150,10 @@
         android:layout_marginHorizontal="@dimen/dp14"
         android:paddingVertical="@dimen/dp12"
         android:clickable="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/sortTypeLL"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/rightBorder">
 
         <TextView
             android:id="@+id/themeTV"
@@ -139,4 +171,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
