@@ -17,14 +17,16 @@ class SettingsViewModel(
     private val settingsInteractor: SettingsInteractor,
     private val themeManager: ThemeManager,
 ) : ViewModel() {
+
     private val _currentThemeSettings = MutableStateFlow(themeManager.currentTheme.value)
     val currentThemeSettings: StateFlow<Theme> get() = _currentThemeSettings
 
-    val isPasswordSet: StateFlow<Boolean> get() = settingsInteractor.getIsPasswordSet().stateIn(
-        viewModelScope,
-        SharingStarted.Lazily,
-        false
-    )
+    val isPasswordSet: StateFlow<Boolean> = settingsInteractor.getIsPasswordSet()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Lazily,
+            false
+        )
 
     val isPasswordEnabled = settingsInteractor.getEnablePassword().stateIn(
         viewModelScope,

@@ -1,6 +1,6 @@
 package com.example.ideacollector.settings.data.repo
 
-import androidx.datastore.core.IOException
+import android.util.Log
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import java.io.IOException
 
 class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core.DataStore<Preferences>) :
     SettingsRepository {
@@ -34,18 +35,20 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
     }
 
     override fun readThemeSettings(): Flow<Theme?> {
-        val theme: Flow<Theme?> = dataStore.data
+        return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
-                    emit(emptyPreferences())
+                    Log.e("DataStoreSettingsRepository", "Error reading theme settings", exception)
+                    emit(emptyPreferences()) // Возвращаем пустые префы при IOException
                 } else {
-                    throw exception
+                    Log.e("DataStoreSettingsRepository", "Unexpected error while reading theme settings", exception)
+                    throw exception // Пробрасываем другие исключения
                 }
-            }.map { preferences ->
+            }
+            .map { preferences ->
                 val themeName = preferences[THEME_KEY]
                 themeName?.let { Theme.valueOf(it) }
             }
-        return theme
     }
 
     override suspend fun writeThemeSetting(theme: Theme) {
@@ -58,9 +61,11 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
         return dataStore.data
             .catch { exception ->
                 if (exception is IOException) {
-                    emit(emptyPreferences())
+                    Log.e("DataStoreSettingsRepository", "Error reading sorting settings", exception)
+                    emit(emptyPreferences()) // Возвращаем пустые префы при IOException
                 } else {
-                    throw exception
+                    Log.e("DataStoreSettingsRepository", "Unexpected error while reading sorting settings", exception)
+                    throw exception // Пробрасываем другие исключения
                 }
             }
             .map { preferences ->
@@ -68,6 +73,7 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
                 sortType?.let { SortType.valueOf(it) } ?: SortType.DATE
             }
     }
+
 
     override suspend fun writeSortingSettings(sortType: SortType) {
         dataStore.edit { preferences ->
@@ -78,8 +84,13 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
     override fun readEnablePasswordSettings(): Flow<Boolean> {
         return dataStore.data
             .catch { exception ->
-                exception.printStackTrace() // Логируем все ошибки
-                emit(emptyPreferences()) // Эмитим пустые настройки в случае ошибки
+                if (exception is IOException) {
+                    Log.e("DataStoreSettingsRepository", "Error reading enable password settings", exception)
+                    emit(emptyPreferences()) // Возвращаем пустые префы при IOException
+                } else {
+                    Log.e("DataStoreSettingsRepository", "Unexpected error while reading enable password settings", exception)
+                    throw exception // Пробрасываем другие исключения
+                }
             }
             .map { preferences ->
                 preferences[ENABLE_PASSWORD_KEY] ?: false // Если ключ отсутствует, возвращаем false
@@ -116,15 +127,16 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
                             savedPassword == inputtedPassword
                         }
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        Log.e("DataStoreSettingsRepository", "Error decrypting password", e)
                         false
                     }
                 } else {
                     inputtedPassword.isEmpty()
                 }
+
                 emit(isPasswordCorrect) // Эмитим результат проверки
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("DataStoreSettingsRepository", "Error checking password", e)
                 emit(false) // Эмитим false в случае ошибки
             }
         }
@@ -146,8 +158,13 @@ class DataStoreSettingsRepository(private val dataStore: androidx.datastore.core
     override fun readIsPasswordSet(): Flow<Boolean> {
         return dataStore.data
             .catch { exception ->
-                exception.printStackTrace() // Логируем все ошибки
-                emit(emptyPreferences()) // Эмитим пустые настройки в случае ошибки
+                if (exception is IOException) {
+                    Log.e("DataStoreSettingsRepository", "Error reading isPasswordSet setting", exception)
+                    emit(emptyPreferences()) // Возвращаем пустые префы при IOException
+                } else {
+                    Log.e("DataStoreSettingsRepository", "Unexpected error while reading isPasswordSet setting", exception)
+                    throw exception // Пробрасываем другие исключения
+                }
             }
             .map { preferences ->
                 preferences[IS_PASSWORD_SET_KEY] ?: false // Если ключ отсутствует, возвращаем false
