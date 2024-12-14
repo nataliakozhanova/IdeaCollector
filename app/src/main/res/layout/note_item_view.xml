@@ -34,8 +34,8 @@
             tools:text="@string/note_mock" />
 
         <TextView
-            android:id="@+id/dataTextView"
-            style="@style/dataText"
+            android:id="@+id/dateTextView"
+            style="@style/dateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"

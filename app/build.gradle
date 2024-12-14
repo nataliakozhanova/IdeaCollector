@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace 'com.example.ideacollector'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.example.ideacollector"
@@ -58,8 +58,13 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     // Materials
     implementation(libs.material)
+
     // корутины
     implementation(libs.kotlinx.coroutines.android)
+    // хранение настроек
+    implementation libs.androidx.datastore.preferences
+    implementation libs.androidx.datastore.core
+    implementation libs.androidx.security.crypto
 
     // DI зависимости
     implementation(libs.koin.android)

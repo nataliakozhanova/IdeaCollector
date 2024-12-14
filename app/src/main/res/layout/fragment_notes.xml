@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSecondary"
-    tools:context=".notes.ui.NotesFragment">
+    tools:context=".notes.presentation.ui.NotesFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/inputTextLayout"
@@ -17,10 +17,10 @@
         app:endIconMode="custom"
         app:endIconTint="?attr/colorOnPrimary"
         app:hintEnabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/delimiterImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/delimiterImageView"
         app:startIconDrawable="@drawable/priority_red"
         app:startIconTint="@null">
 
@@ -29,10 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:cursorVisible="true"
-            android:textCursorDrawable="@drawable/custom_cursor_color"
             android:inputType="text"
             android:maxLength="50"
             android:textAppearance="@style/noteText"
+            android:textCursorDrawable="@drawable/custom_cursor_color"
             tools:text="@string/note_mock" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -40,10 +40,10 @@
         android:id="@+id/delimiterImageView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/note_icon_size"
-        app:layout_constraintTop_toBottomOf="@+id/inputTextLayout"
+        android:background="@drawable/delimiter"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/delimiter"/>
+        app:layout_constraintTop_toBottomOf="@+id/inputTextLayout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notesRecyclerView"
@@ -57,6 +57,29 @@
         tools:itemCount="6"
         tools:listitem="@layout/note_item_view"
         tools:visibility="visible" />
+
+
+    <View
+        android:id="@+id/passEnabledView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/authorization_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delimiterImageView" />
+
+    <ImageView
+        android:id="@+id/passEnabledIV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/lock"
+        android:elevation="@dimen/dp8"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SpeakableTextPresentCheck" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

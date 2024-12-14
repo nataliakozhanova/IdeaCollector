@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/notesFragment"
-        android:name="com.example.ideacollector.notes.ui.NotesFragment"
+        android:name="com.example.ideacollector.notes.presentation.ui.NotesFragment"
         android:label="fragment_notes"
         tools:layout="@layout/fragment_notes">
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.ideacollector.settings.ui.SettingsFragment"
+        android:name="com.example.ideacollector.settings.presentation.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>
