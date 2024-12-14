@@ -62,14 +62,6 @@ class NotesFragment : Fragment() {
         binding.inputText.setTextCursorDrawable(R.drawable.custom_cursor_color)
         binding.inputTextLayout.isEndIconCheckable = false
 
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                notesViewModel.isPasswordEnabled.collect { isPasswordEnabled ->
-//                    renderLockScreen(isPasswordEnabled)
-//                }
-//            }
-//        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 notesViewModel.isScreenUnlocked.collect { isUnlocked ->
